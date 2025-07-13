@@ -89,7 +89,14 @@
                     </a>
                 </li>
                 <li>
-                    <a href=""
+                    <a href="{{ route('admin.dokumen-desa.index') }}"
+                        class="flex items-center px-5 py-3 text-gray-700 hover:bg-gray-200 transition-colors duration-200 {{ request()->routeIs('admin.dokumen-desa.index') ? 'bg-gray-600 text-white hover:bg-gray-700' : '' }}">
+                        <i class="fas fa-file-word w-5 text-center mr-3"></i>
+                        Dokumen
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.surat-desa.index') }}"
                         class="flex items-center px-5 py-3 text-gray-700 hover:bg-gray-200 transition-colors duration-200 {{ request()->routeIs('surat.*') ? 'bg-gray-600 text-white hover:bg-gray-700' : '' }}">
                         <i class="fas fa-envelope w-5 text-center mr-3"></i>
                         Surat Desa
@@ -102,7 +109,7 @@
                         <i class="fas fa-sign-out-alt w-5 text-center mr-3"></i>
                         Keluar
                     </a>
-                    <form id="logout-form" action="" method="POST" class="hidden">
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
                         @csrf
                     </form>
                 </li>

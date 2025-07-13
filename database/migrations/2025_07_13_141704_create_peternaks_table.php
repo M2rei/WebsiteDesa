@@ -11,16 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('dokumen_desa', function (Blueprint $table) {
+        Schema::create('peternaks', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('desa_id');
-            $table->string('nama_document');
-            $table->string('kategori');
-            $table->string('dokumen');
-            $table->json('fields');
+            $table->string('nama');
+            $table->string('alamat');
             $table->timestamps();
-
-            $table->foreign('desa_id')->references('id')->on('desa')->onDelete('cascade');
         });
     }
 
@@ -29,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('dokumen_desa');
+        Schema::dropIfExists('peternaks');
     }
 };

@@ -36,7 +36,7 @@
                 <!-- Add Data Button -->
                 <a href="{{ route('admin.dokumen-desa.create') }}"
                     class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center">
-                    <i class="fas fa-plus mr-2  "></i>
+                    <i class="fas fa-plus mr-2"></i>
                     Tambah Dokument
                 </a>
             </div>
@@ -53,7 +53,13 @@
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <div class="flex items-center space-x-1">
-                                    <span>Status</span>
+                                    <span>Nama Dokumen</span>
+                                    <i class="fas fa-sort text-gray-400"></i>
+                                </div>
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <div class="flex items-center space-x-1">
+                                    <span>Kategori</span>
                                     <i class="fas fa-sort text-gray-400"></i>
                                 </div>
                             </th>
@@ -75,26 +81,21 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        @forelse($suratdesas as $index => $suratdesa)
+                        @forelse($dokumendesas as $index => $dokumendesa)
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $index + 1 }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-900">
+                                    <div class="max-w-xs font-medium">{{ $dokumendesa->nama_document }}</div>
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    @php
-                                        $status = strtolower($suratdesa->status);
-                                        $statusColor = match ($status) {
-                                            'diproses' => ['bg' => 'bg-yellow-100', 'text' => 'text-yellow-800'],
-                                            'selesai' => ['bg' => 'bg-green-100', 'text' => 'text-green-800'],
-                                        };
-                                    @endphp
-
                                     <span
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $statusColor['bg'] }} {{ $statusColor['text'] }}">
-                                        {{ ucfirst($suratdesa->status) }}
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-{{ $dokumendesa->kategori }}-100 text-{{ $dokumendesa->kategori }}-800">
+                                        {{ $dokumendesa->kategori }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-900">
                                     @php
-                                        $extension = pathinfo($suratdesa->dokumen, PATHINFO_EXTENSION);
+                                        $extension = pathinfo($dokumendesa->dokumen, PATHINFO_EXTENSION);
                                     @endphp
 
                                     <div class="flex items-center space-x-2">
@@ -112,15 +113,19 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    {{ $suratdesa->created_at->format('d/m/Y') }}
+                                    {{ $dokumendesa->created_at->format('d/m/Y') }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div class="flex items-center space-x-2">
-                                        <a href="{{ route('admin.surat-desa.show', $suratdesa->id) }}"
+                                        <a href="{{ route('admin.dokumen-desa.show', $dokumendesa->id) }}"
                                             class="text-gray-600 hover:text-gray-900 p-1" title="Lihat">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <button onclick="showDeleteModal({{ $suratdesa->id }})"
+                                        <a href="{{ route('admin.dokumen-desa.edit', $dokumendesa->id) }}"
+                                            class="text-blue-600 hover:text-blue-900 p-1" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button onclick="showDeleteModal({{ $dokumendesa->id }})"
                                             class="text-red-600 hover:text-red-900 p-1" title="Hapus">
                                             <i class="fas fa-trash"></i>
                                         </button>
@@ -140,30 +145,30 @@
         </div>
 
         <!-- Pagination -->
-        @if ($suratdesas->hasPages())
+        @if ($dokumendesas->hasPages())
             <div class="flex items-center justify-between">
                 <div class="text-sm text-gray-700">
-                    Menampilkan <span class="font-medium">{{ $suratdesas->firstItem() }}</span> sampai
-                    <span class="font-medium">{{ $suratdesas->lastItem() }}</span> dari
-                    <span class="font-medium">{{ $suratdesas->total() }}</span> hasil
+                    Menampilkan <span class="font-medium">{{ $dokumendesas->firstItem() }}</span> sampai
+                    <span class="font-medium">{{ $dokumendesas->lastItem() }}</span> dari
+                    <span class="font-medium">{{ $dokumendesas->total() }}</span> hasil
                 </div>
 
                 <div class="flex items-center space-x-2">
-                    @if ($suratdesas->onFirstPage())
+                    @if ($dokumendesas->onFirstPage())
                         <button disabled
                             class="px-3 py-2 text-sm text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
                             Sebelumnya
                         </button>
                     @else
-                        <a href="{{ $suratdesas->previousPageUrl() }}"
+                        <a href="{{ $dokumendesas->previousPageUrl() }}"
                             class="px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
                             Sebelumnya
                         </a>
                     @endif
 
                     <div class="flex items-center space-x-1">
-                        @foreach ($suratdesas->getUrlRange(1, $suratdesas->lastPage()) as $page => $url)
-                            @if ($page == $suratdesas->currentPage())
+                        @foreach ($dokumendesas->getUrlRange(1, $dokumendesas->lastPage()) as $page => $url)
+                            @if ($page == $dokumendesas->currentPage())
                                 <span
                                     class="px-3 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-md">
                                     {{ $page }}
@@ -177,8 +182,8 @@
                         @endforeach
                     </div>
 
-                    @if ($suratdesas->hasMorePages())
-                        <a href="{{ $suratdesas->nextPageUrl() }}"
+                    @if ($dokumendesas->hasMorePages())
+                        <a href="{{ $dokumendesas->nextPageUrl() }}"
                             class="px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
                             Selanjutnya
                         </a>
@@ -226,7 +231,7 @@
 @push('scripts')
     <script>
         // Delete functionality
-        const deleteRouteTemplate = "{{ route('admin.surat-desa.destroy', ['id' => '__ID__']) }}";
+        const deleteRouteTemplate = "{{ route('admin.dokumen-desa.destroy', ['id' => '__ID__']) }}";
 
         function showDeleteModal(id) {
             const deleteModal = document.getElementById('deleteModal');
@@ -263,9 +268,9 @@
         document.querySelector('select').addEventListener('change', function(e) {
             const value = e.target.value;
             if (value === 'all') {
-                window.location.href = "{{ route('admin.surat-desa.index') }}?per_page=all";
+                window.location.href = "{{ route('admin.dokumen-desa.index') }}?per_page=all";
             } else {
-                window.location.href = "{{ route('admin.surat-desa.index') }}?per_page=" + value;
+                window.location.href = "{{ route('admin.dokumen-desa.index') }}?per_page=" + value;
             }
         });
     </script>

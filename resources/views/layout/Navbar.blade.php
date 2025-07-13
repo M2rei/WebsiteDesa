@@ -96,7 +96,8 @@
                         class="transition-colors px-3 py-2 rounded {{ request()->routeIs('user.potensidesa') ? 'bg-blue-700 text-white' : 'hover:text-blue-200' }}">
                         Potensi Desa
                     </a>
-                    <a href="#" class="transition-colors px-3 py-2 rounded hover:text-blue-200">
+                    <a href="{{ route('user.surat.create') }}"
+                        class="transition-colors px-3 py-2 rounded {{ request()->routeIs('user.surat.create') ? 'bg-blue-700 text-white' : 'hover:text-blue-200' }}">
                         Surat Desa
                     </a>
                 </div>

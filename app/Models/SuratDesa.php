@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class SuratDesa extends Model
 {
-    protected $fillable = ['data_pendukung_id', 'dokumen', 'status'];
+    protected $table = 'surat_desa';
+    protected $primaryKey = 'id';
+    protected $fillable = ['desa_id', 'dokumen', 'status'];
 
     public function dataPendukung()
     {
-        return $this->belongsTo(DataPendukung::class);
+        return $this->hasMany(DataPendukung::class);
     }
 }

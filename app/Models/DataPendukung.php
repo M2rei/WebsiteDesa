@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class DataPendukung extends Model
 {
-    protected $fillable = ['image'];
+    protected $table = 'data_pendukung';
+    protected $primaryKey = 'id';
+    protected $fillable = ['surat_desa_id','image'];
 
     public function suratDesa()
     {
-        return $this->hasMany(SuratDesa::class);
+        return $this->belongsTo(SuratDesa::class);
     }
 }

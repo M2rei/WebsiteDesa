@@ -74,8 +74,7 @@
                 $tigaTerbaru = $informasi->sortByDesc('created_at')->take(3);
             @endphp
             <div class="text-center mb-16 animate-fade-in-up">
-                <h2 class="text-4xl font-bold text-gray-800 mb-4">Informasi Terbaru</h2>
-                <p class="text-gray-600 text-lg">Berita terbaru akan selalu diupdate secara berkala</p>
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Berita Terbaru</h2>
             </div>
 
             @if ($tigaTerbaru->count() > 0)
@@ -137,45 +136,19 @@
         </div>
     </section>
 
-    <!-- Statistics Section with Counter Animation -->
-    <section class="py-20 bg-primary-800 text-white ">
+    <!-- Peta Desa Ngrejo -->
+    <section class="py-20 bg-white border-t">
         <div class="container mx-auto px-4">
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div class="text-center animate-fade-in-up">
-                    <div
-                        class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 transition-all duration-500 hover:bg-white/30 hover:scale-110">
-                        <i class="fas fa-users text-2xl"></i>
-                    </div>
-                    <h3 class="text-3xl font-bold mb-2 counter" data-target="2547">0</h3>
-                    <p class="text-blue-200">Total Penduduk</p>
-                </div>
-                <div class="text-center animate-fade-in-up delay-100">
-                    <div
-                        class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 transition-all duration-500 hover:bg-white/30 hover:scale-110">
-                        <i class="fas fa-home text-2xl"></i>
-                    </div>
-                    <h3 class="text-3xl font-bold mb-2 counter" data-target="847">0</h3>
-                    <p class="text-blue-200">Kepala Keluarga</p>
-                </div>
-                <div class="text-center animate-fade-in-up delay-200">
-                    <div
-                        class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 transition-all duration-500 hover:bg-white/30 hover:scale-110">
-                        <i class="fas fa-map text-2xl"></i>
-                    </div>
-                    <h3 class="text-3xl font-bold mb-2 counter" data-target="12.5">0</h3>
-                    <p class="text-blue-200">Luas Wilayah (km²)</p>
-                </div>
-                <div class="text-center animate-fade-in-up delay-300">
-                    <div
-                        class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 transition-all duration-500 hover:bg-white/30 hover:scale-110">
-                        <i class="fas fa-building text-2xl"></i>
-                    </div>
-                    <h3 class="text-3xl font-bold mb-2 counter" data-target="15">0</h3>
-                    <p class="text-blue-200">Dusun</p>
-                </div>
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Peta Satelit Desa Ngrejo</h2>
+            <div class="w-full h-[500px] rounded-lg overflow-hidden shadow-lg">
+                <iframe width="100%" height="100%" style="border:0;" loading="lazy" allowfullscreen
+                    referrerpolicy="no-referrer-when-downgrade"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d21109.271763216202!2d112.06310166530442!3d-8.243581464319378!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e78c31f13afc33d%3A0x4a2a96a0c82e2486!2sNgrejo%2C%20Kec.%20Bakung%2C%20Kabupaten%20Blitar%2C%20Jawa%20Timur!5e1!3m2!1sid!2sid!4v1752248904378!5m2!1sid!2sid">
+                </iframe>
             </div>
         </div>
     </section>
+
 @endsection
 
 @push('scripts')

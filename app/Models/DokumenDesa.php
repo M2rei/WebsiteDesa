@@ -6,7 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class DokumenDesa extends Model
 {
-    protected $fillable = ['nama_document', 'kategori', 'desa_id', 'dokumen'];
+    protected $table = 'dokumen_desa';
+    protected $primaryKey = 'id';
+    protected $fillable = ['nama_document', 'kategori', 'desa_id', 'dokumen','fields'];
 
     public function desa()
     {
