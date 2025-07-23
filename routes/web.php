@@ -13,8 +13,8 @@ use App\Http\Controllers\SuratDesaController;
 use Illuminate\Support\Facades\Route;
 
 //SECTION - USER 
+Route::get('/', [PublicViewController::class, 'index'])->name('dashboard');
 Route::prefix('user')->group(function () {
-    Route::get('/dashboard', [PublicViewController::class, 'index'])->name('dashboard');
     Route::get('/profile', [PublicViewController::class, 'indexProfileDesa'])->name('user.profile');
     Route::get('/potensidesa', [PublicViewController::class, 'indexPotensiDesa'])->name('user.potensidesa');
     Route::get('/potensi-desa/{id}', [PublicViewController::class, 'show_potensidesa'])->name('user.potensidesa.show');
@@ -48,6 +48,12 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     //SECTION - Struktur Organisasi
     Route::controller(StrukturOrganisasiController::class)->prefix('struktur-organisasi')->name('struktur-organisasi.')->group(function () {
         Route::get('/', 'index')->name('index');
+        Route::get('/create', 'create')->name('create');
+        Route::get('/{id}/edit', 'edit')->name('edit');
+        Route::get('/{id}', 'show')->name('show');
+        Route::put('/{id}/updatestrukturanggota', 'updateStrukturOrganisasi')->name('updateStrukturOrganisasi');
+        Route::post('/', 'store')->name('store');
+        Route::delete('/{id}', 'destroy')->name('destroy');
         Route::put('/{id}', 'update')->name('update');
     });
 
@@ -72,29 +78,18 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::put('/{id}', 'update')->name('update');
         Route::delete('/{id}', 'destroy')->name('destroy');
     });
-    //SECTION - Dokumen Desa
-    Route::controller(DokumenDesaController::class)->prefix('dokumen-desa')->name('dokumen-desa.')->group(function () {
+    Route::controller(SuratDesaController::class)->prefix('surat-desa')->name('surat-desa.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/gambar-surat/{filename}', 'showImage')->name('gambar.show');
+        Route::get('/{id}', 'show')->name('show');
+        Route::patch('/{id}/update-status', 'updateStatus')->name('update-status');
+        Route::delete('/{id}', 'destroy')->name('destroy');
+    });
+
+    Route::prefix('peternak')->controller(PeternakController::class)->name('peternak.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/create', 'create')->name('create');
         Route::post('/', 'store')->name('store');
-        Route::get('/{id}', 'show')->name('show');
-        Route::get('/{id}/edit', 'edit')->name('edit');
-        Route::put('/{id}', 'update')->name('update');
-        Route::delete('/{id}', 'destroy')->name('destroy');
+        Route::get('/export', 'export')->name('export');
     });
-    Route::controller(SuratDesaController::class)->prefix('surat-desa')->name('surat-desa.')->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::get('/{id}', 'show')->name('show');
-        Route::delete('/{id}', 'destroy')->name('destroy');
-        Route::patch('/{id}/update-status', 'updateStatus')->name('admin.surat-desa.update-status');
-        Route::get('/{id}/download-pdf', 'downloadPdf')->name('admin.surat-desa.download-pdf');
-    });
-});
-
-
-Route::prefix('peternak')->controller(PeternakController::class)->name('peternak.')->group(function () {
-    Route::get('/', 'index')->name('index');
-    Route::get('/create', 'create')->name('create');
-    Route::post('/', 'store')->name('store');
-    Route::get('/export', 'export')->name('export');
 });

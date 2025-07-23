@@ -2,14 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use PhpOffice\PhpWord\TemplateProcessor;
 use App\Models\DataPendukung;
 use App\Models\Desa;
-use App\Models\DokumenDesa;
 use App\Models\SuratDesa;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 class SuratDesaController extends Controller
@@ -33,61 +29,45 @@ class SuratDesaController extends Controller
     public function create()
     {
         $desa = Desa::first();
-        $dokumenSurat = DokumenDesa::where('kategori', 'Surat')->get();
-        return view('User.dokument', compact('dokumenSurat', 'desa'));
+        return view('User.dokument', compact('desa'));
     }
-
-    public function getFields($id)
-    {
-        $dokumen = DokumenDesa::findOrFail($id);
-
-        return response()->json([
-            'fields' => $dokumen->fields,
-        ]);
-    }
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        // Ambil dokumen yang dipilih user
-        $dokumen = DokumenDesa::findOrFail($request->dokumen_desa_id);
+        $validated = $request->validate([
+            'jenis_surat' => 'required|string|max:255',
+            'nama' => 'required|string|max:255',
+            'nik' => 'required|string|max:255',
+            'tempat_tgl_lahir' => 'required|string|max:255',
+            'jenis_kelamin' => 'required|string',
+            'agama' => 'required|string',
+            'pekerjaan' => 'required|string',
+            'alamat' => 'required|string',
+            'catatan_pemohon' => 'nullable|string',
+            'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
 
-        // Validasi input field dinamis
-        $fieldValidations = [];
-        foreach (json_decode($dokumen->fields ?? '[]') as $field) {
-            $fieldValidations[$field] = 'required|string';
-        }
-        // Validasi utama
-        $validated = $request->validate(array_merge([
-            'desa_id' => 'required|exists:desa,id',
-            'dokumen_desa_id' => 'required|exists:dokumen_desa,id',
-            'images.*' => 'image|mimes:jpg,jpeg,png|max:2048',
-        ], $fieldValidations));
-
-        // Proses Template Word
-        $templatePath = storage_path('app/public/' . $dokumen->dokumen);
-        $template = new TemplateProcessor($templatePath);
-
-        foreach (json_decode($dokumen->fields) as $field) {
-            $template->setValue($field, $request->input($field));
-        }
-
-        $outputName = 'document_' . time() . '.docx';
-        $outputPath = storage_path('app/public/surat/' . $outputName);
-        $template->saveAs($outputPath);
-
+        // Simpan data surat
         $surat = SuratDesa::create([
-            'desa_id' => $request->desa_id,
-            'dokumen' => 'surat/' . $outputName,
+            'jenis_surat' => $request->jenis_surat,
+            'nama' => $validated['nama'],
+            'nik' => $validated['nik'],
+            'tempat_tgl_lahir' => $validated['tempat_tgl_lahir'],
+            'jenis_kelamin' => $validated['jenis_kelamin'],
+            'agama' => $validated['agama'],
+            'pekerjaan' => $validated['pekerjaan'],
+            'alamat' => $validated['alamat'],
+            'catatan_pemohon' => $validated['catatan_pemohon'] ?? null,
             'status' => 'diproses',
         ]);
 
-        // Simpan data pendukung (gambar)
+        // Simpan gambar-gambar (jika ada)
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                $path = $image->store('data_pendukung', 'public');
+                $path = $image->store('data_pendukung');
+
                 DataPendukung::create([
                     'surat_desa_id' => $surat->id,
                     'image' => $path,
@@ -95,17 +75,8 @@ class SuratDesaController extends Controller
             }
         }
 
-        // Konversi ke PDF
-        // $fullPdfPath = str_replace('.docx', '.pdf', $outputPath);
-        // exec("libreoffice --headless --convert-to pdf --outdir " . escapeshellarg(dirname($fullPdfPath)) . " " . escapeshellarg($outputPath));
-
-        // Update path PDF
-        // $surat->update([
-        //     'dokumen' => 'surat/' . basename($fullPdfPath),
-        // ]);
-
-
-        return redirect()->route('user.surat.create')->with('success', 'Surat berhasil diajukan dan dibuat.')->with('file_url', asset('storage/surat/' . basename($outputName)));
+        return redirect()->route('user.surat.create')
+            ->with('success', 'Surat berhasil diajukan dan gambar berhasil diunggah.');
     }
 
     /**
@@ -114,7 +85,22 @@ class SuratDesaController extends Controller
     public function show($id)
     {
         $suratdesa = SuratDesa::with('dataPendukung')->findOrFail($id);
+        foreach ($suratdesa->dataPendukung as $lampiran) {
+            $lampiran->private_url = route('admin.surat-desa.gambar.show', ['filename' => basename($lampiran->image)]);
+        }
         return view('Admin.SuratDesa.show', compact('suratdesa'));
+    }
+
+    public function showImage($filename)
+    {
+        $path = storage_path('app/private/data_pendukung/' . $filename);
+
+        $isAuthorized = DataPendukung::where('image', 'data_pendukung/' . $filename)->exists();
+        if (!file_exists($path)|| !$isAuthorized) {
+            abort(404);
+        }
+
+        return response()->file($path);
     }
 
     public function updateStatus($id)
@@ -128,43 +114,6 @@ class SuratDesaController extends Controller
         }
 
         return redirect()->route('admin.surat-desa.show', $id)->with('success', 'Status berhasil diperbarui menjadi selesai.');
-    }
-
-    public function downloadPdf($id)
-    {
-        $suratdesa = SuratDesa::with('dataPendukung')->findOrFail($id);
-        $images = $suratdesa->dataPendukung;
-
-        $html = '<html><head><style>
-                body { font-family: DejaVu Sans, sans-serif; margin: 0; padding: 0; }
-                .page { page-break-after: always; padding: 20px; }
-                .row { display: flex; justify-content: center; gap: 20px; }
-                .img-container { width: 49%; text-align: center; }
-                img { width: 100%; height: auto; max-height: 500px; object-fit: contain; border: 1px solid #ccc; }
-            </style></head><body>';
-
-        $chunks = $images->chunk(1);
-
-        foreach ($chunks as $chunk) {
-            $html .= '<div class="page"><div class="row">';
-            foreach ($chunk as $lampiran) {
-                $path = storage_path('app/public/' . $lampiran->image);
-                if (file_exists($path)) {
-                    $type = pathinfo($path, PATHINFO_EXTENSION);
-                    $data = file_get_contents($path);
-                    $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
-
-                    $html .= '<div class="img-container"><img src="' . $base64 . '" alt="Gambar"></div>';
-                }
-            }
-            $html .= '</div></div>';
-        }
-
-        $html .= '</body></html>';
-
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadHTML($html)->setPaper('A4', 'portrait');
-
-        return $pdf->download('data_pendukung_surat_' . $suratdesa->id . '.pdf');
     }
 
     /**
@@ -189,19 +138,14 @@ class SuratDesaController extends Controller
     public function destroy($id)
     {
         $suratdesa = SuratDesa::with('dataPendukung')->findOrFail($id);
-        if ($suratdesa->dokumen && Storage::disk('public')->exists($suratdesa->dokumen)) {
-            Storage::disk('public')->delete($suratdesa->dokumen);
-        }
 
         foreach ($suratdesa->dataPendukung as $lampiran) {
-            if ($lampiran->image && Storage::disk('public')->exists($lampiran->image)) {
-                Storage::disk('public')->delete($lampiran->image);
+            if ($lampiran->image && Storage::exists($lampiran->image)) {
+                Storage::delete($lampiran->image);
             }
             $lampiran->delete();
         }
-
         $suratdesa->delete();
-
         return redirect()->route('admin.surat-desa.index')->with('success', 'Surat dan data terkait berhasil dihapus.');
     }
 }

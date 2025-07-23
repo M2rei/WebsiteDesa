@@ -8,7 +8,6 @@
         @csrf
 
         <div class="space-y-6">
-            <input type="hidden" name="desa_id" value="{{ $potensidesa->id }}">
             <!-- nama_potensi -->
             <div>
                 <label for="nama_potensi" class="block text-lg font-semibold text-gray-700 mb-2">Nama Potensi</label>

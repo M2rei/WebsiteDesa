@@ -18,7 +18,10 @@ class PotensiDesaController extends Controller
         $potensidesas = $perPage === 'all'
             ? PotensiDesa::latest()->get()
             : PotensiDesa::latest()->paginate($perPage);
-        return view('Admin.PotensiDesa.potensidesa', compact('potensidesas'));
+        return view('Admin.PotensiDesa.potensidesa', [
+            'potensidesas' => $potensidesas,
+            'selectedPerPage' => $perPage
+        ]);
     }
 
     /**
@@ -36,7 +39,6 @@ class PotensiDesaController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'desa_id' => 'required|exists:desa,id',
             'nama_potensi' => 'required|string|max:255',
             'deskripsi' => 'required',
             'kategori' => 'required|string|max:100',
@@ -77,7 +79,6 @@ class PotensiDesaController extends Controller
     {
         $potensidesa = PotensiDesa::findOrFail($id);
         $validated = $request->validate([
-            'desa_id' => 'required|exists:desa,id',
             'nama_potensi' => 'required|string|max:255',
             'deskripsi' => 'required',
             'kategori' => 'required|string|max:100',

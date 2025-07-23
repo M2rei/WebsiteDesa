@@ -4,9 +4,13 @@
 
 @section('content')
     <!-- Hero Section -->
-    <section class="bg-primary-800 text-white py-20">
-        <div class="container mx-auto px-4">
-            <div class="max-w-4xl mx-auto text-center">
+    <section class="relative bg-primary-800 text-white py-20 overflow-hidden">
+        <div class="absolute inset-0 z-0 bg-cover bg-center opacity-50"
+            style="background-image: url('{{ asset('image/background/1.JPG') }}')">
+        </div>
+
+        <div class="relative z-10 container mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center mt-6">
                 <h1 class="text-5xl font-bold mb-6">Profil Desa Ngrejo</h1>
                 <p class="text-xl text-blue-200">Mengenal lebih dekat tentang Desa Ngrejo, Kabupaten Blitar, Jawa Timur</p>
             </div>
@@ -144,12 +148,12 @@
                     sejahtera
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href=""
+                    <a href="{{ route("user.surat.create") }}"
                         class="bg-white text-orange-600 hover:bg-gray-100 px-8 py-4 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center">
                         <i class="fas fa-envelope mr-2"></i>
                         Layanan Surat
                     </a>
-                    <a href=""
+                    <a href="{{ route('dashboard') }}"
                         class="border-2 border-white text-white hover:bg-white hover:text-orange-600 px-8 py-4 rounded-lg font-semibold transition-colors duration-200 flex items-center justify-center">
                         <i class="fas fa-home mr-2"></i>
                         Kembali ke Beranda

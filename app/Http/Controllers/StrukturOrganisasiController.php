@@ -2,18 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AnggotaStruktur;
 use App\Models\StrukturOrganisasi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class StrukturOrganisasiController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $strukturOrganisasi = StrukturOrganisasi::first();
-        return view('Admin.organisasi', compact('strukturOrganisasi'));
+        $perPage = $request->input('per_page', 5);
+        $anggotaStrukturs = $perPage === 'all'
+            ? AnggotaStruktur::latest()->get()
+            : AnggotaStruktur::latest()->paginate($perPage);
+        return view('Admin.StrukturAnggota.organisasi', compact('strukturOrganisasi', 'anggotaStrukturs'));
     }
 
     /**
@@ -21,7 +27,7 @@ class StrukturOrganisasiController extends Controller
      */
     public function create()
     {
-        //
+        return view('Admin.StrukturAnggota.form');
     }
 
     /**
@@ -29,23 +35,37 @@ class StrukturOrganisasiController extends Controller
      */
     public function store(Request $request)
     {
-        return view('Public.oraganisasi');
+        $validated = $request->validate([
+            'nama' => 'required|string|max:255',
+            'jabatan' => 'required',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        // Proses upload gambar jika ada
+        if ($request->hasFile('foto')) {
+            $validated['foto'] = $request->file('foto')->store('struktur_anggota', 'public');
+        }
+
+        AnggotaStruktur::create($validated);
+        return redirect()->route('admin.struktur-organisasi.index')->with('success', 'Struktur Anggota berhasil ditambahkan');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(StrukturOrganisasi $strukturOrganisasi)
+    public function show($id)
     {
-        //
+        $anggotaStruktur = AnggotaStruktur::findOrFail($id);
+        return view('Admin.StrukturAnggota.show', compact('anggotaStruktur'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(StrukturOrganisasi $strukturOrganisasi)
+    public function edit($id)
     {
-        //
+        $anggotaStruktur = AnggotaStruktur::findOrFail($id);
+        return view('Admin.StrukturAnggota.form-edit', compact('anggotaStruktur'));
     }
 
     /**
@@ -75,11 +95,39 @@ class StrukturOrganisasiController extends Controller
             ->with('success', 'Struktur Organisasi berhasil diperbarui');
     }
 
+    public function updateStrukturOrganisasi(Request $request, $id)
+    {
+        $anggotaStruktur = AnggotaStruktur::findOrFail($id);
+        $validated = $request->validate([
+            'nama' => 'required|string|max:255',
+            'jabatan' => 'required',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        if ($request->hasFile('foto')) {
+            if ($id->image) {
+                Storage::disk('public')->delete($anggotaStruktur->image);
+            }
+            $validated['foto'] = $request->file('foto')->store('struktur_anggota', 'public');
+        }
+
+
+        $anggotaStruktur->update($validated);
+        return redirect()->route('admin.struktur-organisasi.index')->with('success', 'Struktur Anggota berhasil ditambahkan');
+    }
+
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(StrukturOrganisasi $strukturOrganisasi)
+    public function destroy($id)
     {
-        //
+        $anggotaStruktur = AnggotaStruktur::findOrFail($id);
+        if ($anggotaStruktur->foto) {
+            Storage::disk('public')->delete($anggotaStruktur->foto);
+        }
+
+        $anggotaStruktur->delete();
+
+        return redirect()->route('admin.struktur-organisasi.index')->with('success', 'Struktur Anggota berhasil dihapus');
     }
 }

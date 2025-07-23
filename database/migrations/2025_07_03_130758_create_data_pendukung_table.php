@@ -13,11 +13,9 @@ return new class extends Migration
     {
         Schema::create('data_pendukung', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('surat_desa_id');
+            $table->foreignId('surat_desa_id')->constrained('surat_desa')->cascadeOnDelete();
             $table->string('image');
             $table->timestamps();
-
-            $table->foreign('surat_desa_id')->references('id')->on('surat_desa')->onDelete('cascade');
         });
     }
 

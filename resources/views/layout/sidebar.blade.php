@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Profile Desa')</title>
+    <link rel="icon" href="{{ asset('storage/' . $desa->logo_url) }}" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script>
@@ -62,44 +63,44 @@
             <ul class="space-y-1">
                 <li>
                     <a href="{{ route('admin.profile.index') }}"
-                        class="flex items-center px-5 py-3 text-gray-700 hover:bg-gray-200 transition-colors duration-200 {{ request()->routeIs('admin.profile.index') ? 'bg-gray-600 text-white hover:bg-gray-700' : '' }}">
+                        class="flex items-center px-5 py-3 text-gray-700 hover:bg-gray-200 transition-colors duration-200 {{ request()->routeIs('admin.profile.*') ? 'bg-gray-600 text-white hover:bg-gray-700' : '' }}">
                         <i class="fas fa-home w-5 text-center mr-3"></i>
                         Profile Desa
                     </a>
                 </li>
                 <li>
                     <a href="{{ route('admin.struktur-organisasi.index') }}"
-                        class="flex items-center px-5 py-3 text-gray-700 hover:bg-gray-200 transition-colors duration-200 {{ request()->routeIs('admin.struktur-organisasi.index') ? 'bg-gray-600 text-white hover:bg-gray-700' : '' }}">
+                        class="flex items-center px-5 py-3 text-gray-700 hover:bg-gray-200 transition-colors duration-200 {{ request()->routeIs('admin.struktur-organisasi.*') ? 'bg-gray-600 text-white hover:bg-gray-700' : '' }}">
                         <i class="fas fa-sitemap w-5 text-center mr-3"></i>
                         Struktur Organisasi
                     </a>
                 </li>
                 <li>
                     <a href="{{ route('admin.potensi-desa.index') }}"
-                        class="flex items-center px-5 py-3 text-gray-700 hover:bg-gray-200 transition-colors duration-200 {{ request()->routeIs('admin.potensi-desa.index') ? 'bg-gray-600 text-white hover:bg-gray-700' : '' }}">
+                        class="flex items-center px-5 py-3 text-gray-700 hover:bg-gray-200 transition-colors duration-200 {{ request()->routeIs('admin.potensi-desa.*') ? 'bg-gray-600 text-white hover:bg-gray-700' : '' }}">
                         <i class="fas fa-chart-line w-5 text-center mr-3"></i>
                         Potensi Desa
                     </a>
                 </li>
                 <li>
                     <a href="{{ route('admin.informasi.index') }}"
-                        class="flex items-center px-5 py-3 text-gray-700 hover:bg-gray-200 transition-colors duration-200 {{ request()->routeIs('admin.informasi.index') ? 'bg-gray-600 text-white hover:bg-gray-700' : '' }}">
+                        class="flex items-center px-5 py-3 text-gray-700 hover:bg-gray-200 transition-colors duration-200 {{ request()->routeIs('admin.informasi.*') ? 'bg-gray-600 text-white hover:bg-gray-700' : '' }}">
                         <i class="fas fa-info-circle w-5 text-center mr-3"></i>
                         Informasi
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('admin.dokumen-desa.index') }}"
-                        class="flex items-center px-5 py-3 text-gray-700 hover:bg-gray-200 transition-colors duration-200 {{ request()->routeIs('admin.dokumen-desa.index') ? 'bg-gray-600 text-white hover:bg-gray-700' : '' }}">
-                        <i class="fas fa-file-word w-5 text-center mr-3"></i>
-                        Dokumen
+                    <a href="{{ route('admin.surat-desa.index') }}"
+                        class="flex items-center px-5 py-3 text-gray-700 hover:bg-gray-200 transition-colors duration-200 {{ request()->routeIs('admin.surat-desa.*') ? 'bg-gray-600 text-white hover:bg-gray-700' : '' }}">
+                        <i class="fas fa-envelope w-5 text-center mr-3"></i>
+                        Surat Desa
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('admin.surat-desa.index') }}"
-                        class="flex items-center px-5 py-3 text-gray-700 hover:bg-gray-200 transition-colors duration-200 {{ request()->routeIs('surat.*') ? 'bg-gray-600 text-white hover:bg-gray-700' : '' }}">
-                        <i class="fas fa-envelope w-5 text-center mr-3"></i>
-                        Surat Desa
+                    <a href="{{ route('admin.peternak.index') }}"
+                        class="flex items-center px-5 py-3 text-gray-700 hover:bg-gray-200 transition-colors duration-200 {{ request()->routeIs('admin.peternak.*') ? 'bg-gray-600 text-white hover:bg-gray-700' : '' }}">
+                        <i class="fas fa-clipboard-list w-5 text-center mr-3"></i>
+                        Data Ternak
                     </a>
                 </li>
                 <li class="mt-8">

@@ -4,53 +4,108 @@
 
 @section('content')
     <section class="bg-primary-800 text-white py-16">
-        <div class="container mx-auto text-center">
+        <div class="container mx-auto text-center mt-6">
             <h1 class="text-4xl font-bold">Ajukan Surat Desa</h1>
         </div>
     </section>
 
     <div class="container mx-auto mt-10 px-4">
 
-        {{-- Pesan sukses + tombol download PDF --}}
-        @if (session('success'))
-            <div class="mb-6 p-4 rounded bg-green-100 text-green-800">
-                {{ session('success') }}
-
-                @if (session('file_url'))
-                    <div class="mt-3">
-                        <a href="{{ session('file_url') }}" target="_blank"
-                            class="inline-block bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
-                            Unduh Surat
-                        </a>
-                    </div>
-                @endif
-            </div>
-        @endif
-
         <form action="{{ route('user.surat.store') }}" method="POST" enctype="multipart/form-data"
             class="bg-white p-6 rounded shadow max-w-4xl mx-auto">
             @csrf
 
-            <input type="hidden" name="desa_id" value="{{ $desa->id }}">
-
-            <!-- Pilih Surat -->
-            <div class="mb-6">
-                <label for="pilih-surat" class="block mb-2 font-semibold text-gray-700">Pilih Jenis Surat:</label>
-                <select name="dokumen_desa_id" id="pilih-surat" class="w-full border rounded p-2"
-                    onchange="loadDocContent(this)">
-                    <option value="">-- Pilih Surat --</option>
-                    @foreach ($dokumenSurat as $dokumen)
-                        <option value="{{ $dokumen->id }}">{{ $dokumen->nama_document }}</option>
-                    @endforeach
+            <div class="mb-4">
+                <label class="block text-gray-700 font-semibold mb-2">Jenis Surat yang Diajukan</label>
+                <select name="jenis_surat" class="w-full px-4 py-2 border rounded" required>
+                    <option value="">-- Pilih Jenis Surat --</option>
+                    <option value="SURAT KETERANGAN DOMISILI">SURAT KETERANGAN DOMISILI</option>
+                    <option value="SURAT KETERANGAN USAHA">SURAT KETERANGAN USAHA</option>
+                    <option value="SURAT KETERANGAN TINGGAL SEMENTARA">SURAT KETERANGAN TINGGAL SEMENTARA</option>
+                    <option value="SURAT KETERANGAN">SURAT KETERANGAN</option>
+                    <option value="SURAT KETERANGAN KEHILANGAN">SURAT KETERANGAN KEHILANGAN</option>
+                    <option value="SURAT KETERANGAN PINDAH">SURAT KETERANGAN PINDAH</option>
+                    <option value="SURAT KETERANGAN KELAKUAN BAIK">SURAT KETERANGAN KELAKUAN BAIK</option>
+                    <option value="SURAT KETERANGAN KEMATIAN">SURAT KETERANGAN KEMATIAN</option>
+                    <option value="SURAT KETERANGAN KELAHIRAN">SURAT KETERANGAN KELAHIRAN</option>
+                    <option value="SURAT KETERANGAN AHLI WARIS">SURAT KETERANGAN AHLI WARIS</option>
+                    <option value="SURAT KETERANGAN BEPERGIAN (BORO)">SURAT KETERANGAN BEPERGIAN (BORO)</option>
+                    <option value="SURAT KETERANGAN TIDAK MAMPU">SURAT KETERANGAN TIDAK MAMPU</option>
                 </select>
             </div>
 
-            <!-- Field Dinamis -->
-            <div id="field-dinamis" class="mb-6 space-y-4 hidden">
-                <p class="text-gray-800 font-semibold">Isian Surat:</p>
-                <div id="field-container"></div>
+            <input type="hidden" name="desa_id" value="{{ $desa->id }}">
+            <!-- Nama Lengkap -->
+            <div class="mb-4">
+                <label class="block text-gray-700 font-semibold mb-2">Nama Lengkap</label>
+                <input type="text" name="nama" value="{{ old('nama') }}" class="w-full px-4 py-2 border rounded"
+                    placeholder="Contoh: Ahmad Setiawan" required>
             </div>
 
+            <!-- NIK -->
+            <div class="mb-4">
+                <label class="block text-gray-700 font-semibold mb-2">NIK</label>
+                <input type="text" name="nik" value="{{ old('nik') }}" class="w-full px-4 py-2 border rounded"
+                    placeholder="Contoh: 357xxxxxxx" required>
+            </div>
+
+            <!-- Tempat, Tanggal Lahir -->
+            <div class="mb-4">
+                <label class="block text-gray-700 font-semibold mb-2">Tempat, Tanggal Lahir</label>
+                <input type="text" name="tempat_tgl_lahir" value="{{ old('tempat_tgl_lahir') }}"
+                    class="w-full px-4 py-2 border rounded" placeholder="Contoh: Blitar, 21 Juli 2000" required>
+            </div>
+
+            <!-- Jenis Kelamin -->
+            <div class="mb-4">
+                <label class="block text-gray-700 font-semibold mb-2">Jenis Kelamin</label>
+                <select name="jenis_kelamin" class="w-full px-4 py-2 border rounded" required>
+                    <option value="">-- Pilih Jenis Kelamin --</option>
+                    <option value="Laki-laki" {{ old('jenis_kelamin') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                    <option value="Perempuan" {{ old('jenis_kelamin') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                </select>
+            </div>
+
+            <!-- Agama -->
+            <div class="mb-4">
+                <label class="block text-gray-700 font-semibold mb-2">Agama</label>
+                <input type="text" name="agama" value="{{ old('agama') }}" class="w-full px-4 py-2 border rounded"
+                    placeholder="Contoh: Islam, Kristen, Hindu, Budha" required>
+            </div>
+
+            <!-- Pekerjaan -->
+            <div class="mb-4">
+                <label class="block text-gray-700 font-semibold mb-2">Pekerjaan</label>
+                <input type="text" name="pekerjaan" value="{{ old('pekerjaan') }}"
+                    class="w-full px-4 py-2 border rounded" placeholder="Contoh: Petani, Karyawan Swasta, Pelajar" required>
+            </div>
+
+            <!-- Alamat -->
+            <div class="mb-4">
+                <label class="block text-gray-700 font-semibold mb-2">Alamat</label>
+                <textarea name="alamat" rows="3" class="w-full px-4 py-2 border rounded"
+                    placeholder="Tulis alamat lengkap sesuai KTP" required>{{ old('alamat') }}</textarea>
+            </div>
+
+            <!-- Catatan Pemohon -->
+            <div class="mb-4">
+                <label class="block text-gray-700 font-semibold mb-2">Catatan Pemohon</label>
+                <textarea name="catatan_pemohon" rows="2" class="w-full px-4 py-2 border rounded"
+                    placeholder="Tambahkan catatan tambahan jika ada">{{ old('catatan_pemohon') }}</textarea>
+            </div>
+
+            <div class="mb-6">
+                <h4 class="font-semibold text-gray-700 mb-2">Data Pendukung:</h4>
+                <p class="text-sm text-gray-600">
+                    Silakan siapkan dan unggah dokumen sesuai ketentuan berikut:
+                </p>
+                <ul class="list-disc pl-5 text-sm text-gray-600 mt-2 space-y-1">
+                    <li>Fotokopi KTP</li>
+                    <li>Fotokopi Kartu Keluarga (KK)</li>
+                    <li>Surat Pengantar dari Ketua RT</li>
+                    <li>Dokumen lain-lain (jika diperlukan sesuai jenis surat)</li>
+                </ul>
+            </div>
             <!-- Upload Lampiran -->
             <div class="mb-6">
                 <label class="block mb-2 font-semibold text-gray-700">Lampiran (opsional)</label>
@@ -65,7 +120,7 @@
                     <input type="file" id="lampiran-input" name="images[]" accept="image/*" multiple class="hidden"
                         onchange="previewLampiran(this)">
                 </div>
-                <div id="lampiran-preview" class="f flex-wrap gap-4 mt-4 h"></div>
+                <div id="lampiran-preview" class="flex flex-row flex-wrap gap-4 mt-4"></div>
             </div>
 
             <!-- Tombol Submit -->
@@ -80,67 +135,24 @@
 
 @push('scripts')
     <script>
-        function loadDocContent(selectElement) {
-            const docId = selectElement.value;
-            const fieldWrapper = document.getElementById('field-dinamis');
-            const fieldContainer = document.getElementById('field-container');
-
-            fieldContainer.innerHTML = '';
-            fieldWrapper.classList.add('hidden');
-
-            if (!docId) return;
-
-            fetch(`/user/dokumen/${docId}`)
-                .then(res => {
-                    if (!res.ok) throw new Error('Gagal memuat field');
-                    return res.json();
-                })
-                .then(data => {
-                    const fields = JSON.parse(data.fields || '[]');
-                    if (fields.length === 0) return;
-
-                    fields.forEach(field => {
-                        const label = field.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-                        const html = `
-                        <div>
-                            <label class="block text-gray-700 mb-1">${label}</label>
-                            <input type="text" name="${field}" class="w-full border rounded px-3 py-2" required>
-                        </div>`;
-                        fieldContainer.insertAdjacentHTML('beforeend', html);
-                    });
-
-                    fieldWrapper.classList.remove('hidden');
-                })
-                .catch(err => {
-                    console.error(err);
-                    alert('Gagal memuat data surat.');
-                });
-        }
-
-        // ✅ Download otomatis PDF setelah redirect
-        @if (session('file_url'))
-            window.onload = function() {
-                window.open("{{ session('file_url') }}", '_blank');
-            };
-        @endif
-
         function previewLampiran(input) {
             const previewContainer = document.getElementById('lampiran-preview');
-            previewContainer.innerHTML = '';
-            previewContainer.classList.add('hidden');
+            previewContainer.innerHTML = ""; // Bersihkan preview lama
 
-            if (input.files && input.files.length > 0) {
-                previewContainer.classList.remove('hidden');
-
+            if (input.files) {
                 Array.from(input.files).forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.className = 'w-32 h-32 object-cover rounded border';
-                        previewContainer.appendChild(img);
-                    };
-                    reader.readAsDataURL(file);
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+
+                        reader.onload = function(e) {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.className = "w-32 h-32 object-cover rounded border border-gray-300";
+                            previewContainer.appendChild(img);
+                        }
+
+                        reader.readAsDataURL(file);
+                    }
                 });
             }
         }
@@ -162,6 +174,86 @@
             if (files.length > 0) {
                 document.getElementById('lampiran-input').files = files;
                 previewLampiran(document.getElementById('lampiran-input'));
+            }
+        });
+    </script>
+@endpush
+
+@push('scripts')
+    <script>
+        // Smooth scrolling animation
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add initial styles for animation
+            const sections = document.querySelectorAll('section');
+            sections.forEach((section, index) => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(50px)';
+                section.style.transition =
+                    `opacity 0.8s ease ${index * 0.1}s, transform 0.8s ease ${index * 0.1}s`;
+                observer.observe(section);
+            });
+
+            // Add parallax effect to hero section
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                const hero = document.querySelector('section');
+                if (hero) {
+                    hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+                }
+            });
+
+            // Add counter animation for statistics
+            const counters = document.querySelectorAll('h3');
+            const animateCounters = () => {
+                counters.forEach(counter => {
+                    const target = parseInt(counter.textContent.replace(/[^\d]/g, ''));
+                    if (target && !counter.classList.contains('animated')) {
+                        counter.classList.add('animated');
+                        let current = 0;
+                        const increment = target / 50;
+                        const timer = setInterval(() => {
+                            current += increment;
+                            if (current >= target) {
+                                counter.textContent = counter.textContent.replace(/[\d,]+/,
+                                    target.toLocaleString());
+                                clearInterval(timer);
+                            } else {
+                                counter.textContent = counter.textContent.replace(/[\d,]+/, Math
+                                    .floor(current).toLocaleString());
+                            }
+                        }, 30);
+                    }
+                });
+            };
+
+            // Trigger counter animation when statistics section is visible
+            const statsSection = document.querySelector('.bg-primary-800');
+            if (statsSection) {
+                const statsObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            animateCounters();
+                        }
+                    });
+                }, {
+                    threshold: 0.5
+                });
+
+                statsObserver.observe(statsSection);
             }
         });
     </script>

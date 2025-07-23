@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Desa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use PhpParser\Node\Stmt\Return_;
 
 class DesaController extends Controller
@@ -65,8 +66,14 @@ class DesaController extends Controller
         ]);
 
         if ($request->hasFile('logo')) {
+            // Hapus logo lama jika ada
+            if ($desa->logo_url && Storage::disk('public')->exists($desa->logo_url)) {
+                Storage::disk('public')->delete($desa->logo_url);
+            }
+
+            // Simpan logo baru
             $logoPath = $request->file('logo')->store('logos', 'public');
-            $desa->logo_url  = $logoPath;
+            $desa->logo_url = $logoPath;
         }
 
         $desa->profile_desa = $request->profile_desa;

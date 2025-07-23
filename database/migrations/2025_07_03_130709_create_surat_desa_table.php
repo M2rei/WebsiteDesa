@@ -13,12 +13,17 @@ return new class extends Migration
     {
         Schema::create('surat_desa', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('desa_id');
-            $table->string('dokumen');
+            $table->string('jenis_surat');
+            $table->string('nama');
+            $table->string('nik');
+            $table->string('tempat_tgl_lahir');
+            $table->string('jenis_kelamin');
+            $table->string('agama');
+            $table->string('pekerjaan');
+            $table->string('alamat');
+            $table->string('catatan_pemohon')->nullable();
             $table->enum('status', ['diproses', 'selesai'])->default('diproses');
             $table->timestamps();
-
-            $table->foreign('desa_id')->references('id')->on('desa')->onDelete('cascade');
         });
     }
 

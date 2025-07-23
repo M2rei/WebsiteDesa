@@ -14,7 +14,6 @@ class StrukturOrganisasiSeeder extends Seeder
     public function run(): void
     {
         DB::table('struktur_organisasi')->insert([
-            'desa_id' => 1,
             'image' => 'image/Landing Page.png',
             'created_at' => now(),
             'updated_at' => now(),

@@ -3,9 +3,9 @@
 @section('title', 'Beranda - Desa Ngrejo Kabupaten Blitar Jawa Timur')
 
 @section('content')
-    <!-- Hero Section with Parallax -->
-    <section class="hero-bg min-h-screen flex items-center">
-        <div class="container mx-auto px-4 transform transition-transform duration-500 ease-out" id="hero-content">
+    <section class="hero-bg min-h-screen flex items-center relative overflow-hidden">
+        <div class="container mx-auto px-4 transform transition-transform duration-500 ease-out relative z-20"
+            id="hero-content">
             <div class="max-w-4xl ml-20">
                 <h1 class="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight animate-fade-in-up">
                     Selamat Datang<br>
@@ -16,19 +16,16 @@
                     Portal resmi informasi dan layanan publik Desa Ngrejo, Kabupaten Blitar, Jawa Timur
                 </p>
                 <div class="flex space-x-4 animate-fade-in-up delay-200">
-                    <a href="#"
-                        class="border-2 bg-orange-400 hover:bg-orange-600 text-white px-8 py-4 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105">
+                    <a href="{{ route('user.surat.create') }}"
+                        class="inline-flex items-center bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105">
                         Layanan Surat
                     </a>
                 </div>
             </div>
         </div>
 
-        <!-- Slider Dots -->
-        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
-            <div class="w-3 h-3 bg-white rounded-full transition-all duration-300 dot-animation"></div>
-            <div class="w-3 h-3 bg-white/50 rounded-full transition-all duration-300 dot-animation delay-100"></div>
-            <div class="w-3 h-3 bg-white/50 rounded-full transition-all duration-300 dot-animation delay-200"></div>
+        <div class="absolute inset-0 z-0 bg-cover bg-center"
+            style="background-image: url('{{ asset('image/background/1.JPG') }}')">
         </div>
     </section>
 
@@ -39,15 +36,7 @@
                 <div class="relative animate-fade-in-left">
                     <div
                         class="relative rounded-2xl overflow-hidden shadow-2xl hover:shadow-3xl transition-shadow duration-500">
-                        <img src="/placeholder.svg?height=400&width=600" alt="Profile Video"
-                            class="w-full h-80 object-cover">
-                        <div class="absolute inset-0 bg-black/30 flex items-center justify-center">
-                            <button
-                                class="w-20 h-20 bg-orange-500 rounded-full flex items-center justify-center hover:bg-orange-600 transition-all duration-300 transform hover:scale-110 group">
-                                <i
-                                    class="fas fa-play text-white text-2xl ml-1 transform group-hover:scale-125 transition-transform"></i>
-                            </button>
-                        </div>
+                        <img src="{{ asset('image/background/1.JPG') }}" alt="Desa Ngrejo" class="w-full h-80 object-cover">
                     </div>
                 </div>
 
@@ -71,49 +60,70 @@
     <section class="py-20 bg-gray-50 ">
         <div class="container mx-auto px-4">
             @php
-                $tigaTerbaru = $informasi->sortByDesc('created_at')->take(3);
+                $tigaTerbaru = $informasiTerbaru ?? ($informasi->sortByDesc('created_at')->take(3) ?? collect());
             @endphp
             <div class="text-center mb-16 animate-fade-in-up">
-                <h2 class="text-4xl font-bold text-gray-800 mb-4">Berita Terbaru</h2>
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Informasi Terbaru</h2>
             </div>
 
             @if ($tigaTerbaru->count() > 0)
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
                     @foreach ($tigaTerbaru as $index => $item)
-                        <article
-                            class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover transition-all duration-500 ease-out animate-fade-in-up delay-{{ $index * 100 }}">
+                        <article class="bg-white rounded-2xl overflow-hidden shadow hover:shadow-lg transition-all border">
                             <div class="relative">
-                                @if ($item->image)
-                                    <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->judul }}"
-                                        class="w-full h-48 object-cover transition-transform duration-500 hover:scale-105">
+                                <a href="{{ route('user.informasi.show', $item->id) }}" class="absolute inset-0 z-10"></a>
+                                @php
+                                    $lampiran = $item->lampiran;
+                                    $filePath = $lampiran?->file_path;
+                                    $originalName = $lampiran?->original_name;
+                                    $ext = $filePath ? strtolower(pathinfo($filePath, PATHINFO_EXTENSION)) : null;
+                                    $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                                    $isPdf = $ext === 'pdf';
+                                @endphp
+
+                                @if ($filePath)
+                                    @if ($isImage)
+                                        <a href="{{ asset('storage/' . $filePath) }}" target="_blank">
+                                            <img src="{{ asset('storage/' . $filePath) }}" alt="{{ $originalName }}"
+                                                class="w-full h-48 object-cover">
+                                        </a>
+                                    @elseif ($isPdf)
+                                        <a href="{{ asset('storage/' . $filePath) }}" target="_blank">
+                                            <div class="w-full h-48 bg-red-100 flex items-center justify-center rounded">
+                                                <i class="fas fa-file-pdf text-red-600 text-5xl"></i>
+                                            </div>
+                                        </a>
+                                    @else
+                                        <a href="{{ asset('storage/' . $filePath) }}" target="_blank">
+                                            <div class="w-full h-48 bg-gray-100 flex items-center justify-center rounded">
+                                                <i class="fas fa-file text-gray-400 text-4xl"></i>
+                                            </div>
+                                        </a>
+                                    @endif
                                 @else
-                                    <img src="/placeholder.svg?height=250&width=400" alt="{{ $item->judul }}"
-                                        class="w-full h-48 object-cover bg-gray-200 transition-transform duration-500 hover:scale-105">
+                                    <div class="w-full h-48 bg-gray-200 flex items-center justify-center rounded">
+                                        <i class="fas fa-file text-gray-400 text-4xl"></i>
+                                    </div>
                                 @endif
+
                                 <div class="absolute top-4 left-4">
-                                    <span
-                                        class="bg-primary-600 text-white px-3 py-1 rounded-full text-sm font-medium transition-all duration-300 hover:bg-primary-700">
+                                    <span class="bg-primary-600 text-white px-3 py-1 rounded-full text-sm font-medium">
                                         {{ $item->kategori }}
                                     </span>
                                 </div>
                             </div>
                             <div class="p-6">
-                                <h3
-                                    class="text-xl font-bold text-gray-800 mb-3 hover:text-primary-600 transition-colors duration-300">
-                                    <a href="#">{{ $item->judul }}</a>
+                                <h3 class="text-xl font-bold text-gray-800 mb-3 line-clamp-2">
+                                    <a href="{{ route('user.informasi.show', $item->id) }}">
+                                        {{ $item->judul }}
+                                    </a>
                                 </h3>
-                                <p
-                                    class="text-gray-600 mb-4 line-clamp-3 transition-all duration-300 hover:line-clamp-none">
-                                    {{ Str::limit(strip_tags($item->konten), 150) }}
+                                <p class="text-gray-600 mb-4 line-clamp-3">
+                                    {{ \Illuminate\Support\Str::limit(strip_tags($item->deskripsi), 120) }}
                                 </p>
-                                <div class="flex items-center text-sm text-gray-500">
-                                    <div
-                                        class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center mr-3 transition-all duration-300 hover:bg-gray-400">
-                                        <i class="fas fa-user text-gray-500"></i>
-                                    </div>
-                                    <div>
-                                        <p class="font-medium text-gray-700">{{ $item->penulis }}</p>
-                                        <p>{{ $item->created_at->format('d M, Y') }}</p>
+                                <div class="flex items-center justify-between text-sm text-gray-500">
+                                    <div><i class="fas fa-user mr-2"></i>{{ $item->penulis }}</div>
+                                    <div><i class="fas fa-calendar mr-2"></i>{{ $item->created_at->format('d M Y') }}
                                     </div>
                                 </div>
                             </div>
@@ -136,6 +146,28 @@
         </div>
     </section>
 
+    <!-- Struktur Organisasi -->
+    <section class="py-20 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Struktur Organisasi Desa</h2>
+
+            @if ($anggotaStruktur && $anggotaStruktur->count())
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">
+                    @foreach ($anggotaStruktur as $anggota)
+                        <div class="bg-white rounded-lg shadow text-center p-4 hover:shadow-md transition">
+                            <img src="{{ asset('storage/' . $anggota->foto) }}" alt="{{ $anggota->nama }}"
+                                class="w-24 h-24 mx-auto rounded-full object-cover mb-3 border">
+                            <h3 class="text-md font-semibold text-gray-800">{{ $anggota->nama }}</h3>
+                            <p class="text-sm text-gray-500">{{ $anggota->jabatan }}</p>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <p class="text-center text-gray-500">Belum ada anggota struktur organisasi yang tersedia.</p>
+            @endif
+        </div>
+    </section>
+
     <!-- Peta Desa Ngrejo -->
     <section class="py-20 bg-white border-t">
         <div class="container mx-auto px-4">
@@ -153,7 +185,6 @@
 
 @push('scripts')
     <script>
-        // Smooth scrolling animation
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
@@ -169,7 +200,6 @@
         }, observerOptions);
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Add initial styles for animation
             const sections = document.querySelectorAll('section');
             sections.forEach((section, index) => {
                 section.style.opacity = '0';
@@ -188,7 +218,6 @@
                 }
             });
 
-            // Add counter animation for statistics
             const counters = document.querySelectorAll('.bg-primary-800 h3');
             const animateCounters = () => {
                 counters.forEach(counter => {
@@ -212,7 +241,6 @@
                 });
             };
 
-            // Trigger counter animation when statistics section is visible
             const statsSection = document.querySelector('.bg-primary-800');
             if (statsSection) {
                 const statsObserver = new IntersectionObserver((entries) => {

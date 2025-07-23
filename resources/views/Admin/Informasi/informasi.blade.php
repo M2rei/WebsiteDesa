@@ -13,11 +13,11 @@
                     <span class="text-gray-700">Tampilkan</span>
                     <select
                         class="border border-gray-300 rounded px-3 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="5">5</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                        <option value="all">Semua</option>
+                        <option value="5" {{ $selectedPerPage == 5 ? 'selected' : '' }}>5</option>
+                        <option value="10" {{ $selectedPerPage == 10 ? 'selected' : '' }}>25</option>
+                        <option value="25" {{ $selectedPerPage == 25 ? 'selected' : '' }}>50</option>
+                        <option value="100" {{ $selectedPerPage == 100 ? 'selected' : '' }}>100</option>
+                        <option value="all" {{ $selectedPerPage == 'all' ? 'selected' : '' }}>Semua</option>
                     </select>
                     <span class="text-gray-700">baris</span>
                 </div>
@@ -53,7 +53,7 @@
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <div class="flex items-center space-x-1">
-                                    <span>Gambar</span>
+                                    <span>Lampiran</span>
                                 </div>
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -96,12 +96,31 @@
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $index + 1 }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    @if ($berita->image)
-                                        <img src="{{ asset('storage/' . $berita->image) }}" alt="Gambar Berita"
-                                            class="w-16 h-12 object-cover rounded">
+                                    @php
+                                        $filePath = optional($berita->lampiran)->file_path;
+                                        $isImage = $filePath && preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $filePath);
+                                        $isPdf = $filePath && preg_match('/\.pdf$/i', $filePath);
+                                    @endphp
+
+                                    @if ($filePath)
+                                        <a href="{{ asset('storage/' . $filePath) }}" target="_blank">
+                                            @if ($isImage)
+                                                <img src="{{ asset('storage/' . $filePath) }}" alt="Lampiran"
+                                                    class="w-16 h-12 object-cover rounded">
+                                            @elseif ($isPdf)
+                                                <div
+                                                    class="w-16 h-12 bg-red-100 text-red-600 flex items-center justify-center rounded">
+                                                    <i class="fas fa-file-pdf text-xl"></i>
+                                                </div>
+                                            @else
+                                                <div class="w-16 h-12 bg-gray-200 flex items-center justify-center rounded">
+                                                    <i class="fas fa-file text-gray-400 text-xl"></i>
+                                                </div>
+                                            @endif
+                                        </a>
                                     @else
-                                        <div class="w-16 h-12 bg-gray-200 rounded flex items-center justify-center">
-                                            <i class="fas fa-image text-gray-400"></i>
+                                        <div class="w-16 h-12 bg-gray-200 flex items-center justify-center rounded">
+                                            <i class="fas fa-file text-gray-400 text-xl"></i>
                                         </div>
                                     @endif
                                 </td>
@@ -150,52 +169,50 @@
 
         <!-- Pagination -->
         @if ($beritas->hasPages())
-            <div class="flex items-center justify-between">
-                <div class="text-sm text-gray-700">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
+                <div class="text-sm text-gray-600">
                     Menampilkan <span class="font-medium">{{ $beritas->firstItem() }}</span> sampai
                     <span class="font-medium">{{ $beritas->lastItem() }}</span> dari
-                    <span class="font-medium">{{ $beritas->total() }}</span> hasil
+                    <span class="font-medium">{{ $beritas->total() }}</span> data
                 </div>
 
-                <div class="flex items-center space-x-2">
+                <div class="flex items-center space-x-1">
+                    {{-- Previous Button --}}
                     @if ($beritas->onFirstPage())
-                        <button disabled
-                            class="px-3 py-2 text-sm text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
-                            Sebelumnya
-                        </button>
+                        <span class="px-3 py-1 rounded border text-gray-400 cursor-not-allowed">
+                            <i class="fas fa-chevron-left"></i>
+                        </span>
                     @else
-                        <a href="{{ $beritas->previousPageUrl() }}"
-                            class="px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                            Sebelumnya
+                        <a href="{{ $beritas->appends(['per_page' => request('per_page')])->previousPageUrl() }}"
+                            class="px-3 py-1 rounded border border-gray-300 hover:bg-gray-50">
+                            <i class="fas fa-chevron-left"></i>
                         </a>
                     @endif
 
-                    <div class="flex items-center space-x-1">
-                        @foreach ($beritas->getUrlRange(1, $beritas->lastPage()) as $page => $url)
-                            @if ($page == $beritas->currentPage())
-                                <span
-                                    class="px-3 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-md">
-                                    {{ $page }}
-                                </span>
-                            @else
-                                <a href="{{ $url }}"
-                                    class="px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                                    {{ $page }}
-                                </a>
-                            @endif
-                        @endforeach
-                    </div>
+                    {{-- Page Numbers --}}
+                    @foreach ($beritas->getUrlRange(1, $beritas->lastPage()) as $page => $url)
+                        @if ($page == $beritas->currentPage())
+                            <span class="px-3 py-1 rounded bg-blue-600 text-white">
+                                {{ $page }}
+                            </span>
+                        @else
+                            <a href="{{ $beritas->appends(['per_page' => request('per_page')])->url($page) }}"
+                                class="px-3 py-1 rounded border border-gray-300 hover:bg-gray-50">
+                                {{ $page }}
+                            </a>
+                        @endif
+                    @endforeach
 
+                    {{-- Next Button --}}
                     @if ($beritas->hasMorePages())
-                        <a href="{{ $beritas->nextPageUrl() }}"
-                            class="px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                            Selanjutnya
+                        <a href="{{ $beritas->appends(['per_page' => request('per_page')])->nextPageUrl() }}"
+                            class="px-3 py-1 rounded border border-gray-300 hover:bg-gray-50">
+                            <i class="fas fa-chevron-right"></i>
                         </a>
                     @else
-                        <button disabled
-                            class="px-3 py-2 text-sm text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
-                            Selanjutnya
-                        </button>
+                        <span class="px-3 py-1 rounded border text-gray-400 cursor-not-allowed">
+                            <i class="fas fa-chevron-right"></i>
+                        </span>
                     @endif
                 </div>
             </div>
@@ -234,6 +251,15 @@
 
 @push('scripts')
     <script>
+        function updatePerPage(value) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('per_page', value);
+
+            // Reset ke halaman pertama ketika mengubah jumlah item per halaman
+            url.searchParams.set('page', 1);
+
+            window.location.href = url.toString();
+        }
         // Delete functionality
         const deleteRouteTemplate = "{{ route('admin.informasi.destroy', ['id' => '__ID__']) }}";
 

@@ -2,10 +2,10 @@
 
 namespace App\Providers;
 
-use App\Models\Berita;
 use App\Models\Desa;
 use App\Models\Informasi;
 use App\Models\PotensiDesa;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -24,13 +24,20 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $desa = Desa::first();
-        $informasi = Informasi::get();
-        $potensi_desa = PotensiDesa::get();
-        View::share([
-            'desa' => $desa,
-            'informasi' => $informasi,
-            'potensi_desa' => $potensi_desa,
-        ]);
+        $sharedData = [];
+
+        if (Schema::hasTable('desa')) {
+            $sharedData['desa'] = Desa::first();
+        }
+
+        if (Schema::hasTable('informasi')) {
+            $sharedData['informasiTerbaru'] = Informasi::latest()->take(3)->get();
+        }
+
+        if (Schema::hasTable('potensi_desa')) {
+            $sharedData['potensi_desa'] = PotensiDesa::get();
+        }
+
+        View::share($sharedData);
     }
 }

@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('ternak_peternak', function (Blueprint $table) {
             $table->id();
             $table->foreignId('peternak_id')->constrained()->onDelete('cascade');
-            $table->foreignId('ternak_id')->constrained()->onDelete('cascade');
+            $table->string('jenis_ternak');
             $table->enum('jenis_kelamin', ['Jantan', 'Betina']);
             $table->integer('jumlah');
-            $table->string('jenis_pakan')->nullable();
-            $table->string('penyakit')->nullable();
-            $table->string('sistem_pemeliharaan')->nullable();
+            $table->integer('total_jumlah');
+            $table->string('riwayat_penyakit')->nullable();
+            $table->date('vitamin')->nullable();
+            $table->string('keterangan')->nullable();
             $table->timestamps();
         });
     }

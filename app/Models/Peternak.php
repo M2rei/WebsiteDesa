@@ -9,12 +9,11 @@ class Peternak extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nama', 'alamat'];
+    protected $fillable = ['nama', 'alamat', 'tanggal_mulai', 'tanggal_selesai'];
 
     public function ternaks()
     {
-        return $this->belongsToMany(Ternak::class, 'ternak_peternak')
-            ->withPivot(['jenis_kelamin', 'jumlah', 'jenis_pakan', 'penyakit', 'sistem_pemeliharaan'])
-            ->withTimestamps();
+        return $this->hasMany(PeternakanDetail::class, 'peternak_id');
     }
+
 }

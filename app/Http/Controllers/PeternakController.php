@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Exports\PeternakExport;
 use App\Models\Peternak;
-use App\Models\Ternak;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -28,7 +27,7 @@ class PeternakController extends Controller
         $limit = $request->input('limit', 10);
         $peternaks = $query->latest()->paginate($limit)->withQueryString();
 
-        return view('peternak.index', compact('peternaks', 'limit'));
+        return view('Admin.DataTernak.index', compact('peternaks', 'limit'));
     }
     public function export(Request $request)
     {
@@ -38,7 +37,7 @@ class PeternakController extends Controller
 
     public function create()
     {
-        return view('Peternak.create');
+        return view('Admin.DataTernak.form');
     }
 
     public function store(Request $request)
@@ -46,46 +45,53 @@ class PeternakController extends Controller
         $request->validate([
             'nama' => 'required|string',
             'alamat' => 'required|string',
+            'tanggal_mulai' => 'required|string',
+            'tanggal_selesai' => 'required|string',
             'ternaks' => 'required|array',
             'ternaks.*.jenis_ternak' => 'required|string',
-            'ternaks.*.bangsa' => 'required|string',
-            'ternaks.*.jantan' => 'nullable|integer|min:0',
-            'ternaks.*.betina' => 'nullable|integer|min:0',
+            'ternaks.*.jumlah' => 'nullable|integer|min:0',
+            'ternaks.*.riwayat_penyakit' => 'nullable|string|min:0',
+            'ternaks.*.vitamin' => 'nullable|string|min:0',
+            'ternaks.*.keterangan' => 'nullable|string|min:0',
         ]);
 
         $peternak = Peternak::create([
             'nama' => $request->nama,
             'alamat' => $request->alamat,
+            'tanggal_mulai' => $request->tanggal_mulai,
+            'tanggal_selesai' => $request->tanggal_selesai,
         ]);
 
         foreach ($request->ternaks as $data) {
-            $ternak = Ternak::firstOrCreate([
-                'jenis_ternak' => $data['jenis_ternak'],
-                'bangsa' => $data['bangsa'],
-            ]);
+            $jumlah_jantan = $data['jantan'] ?? 0;
+            $jumlah_betina = $data['betina'] ?? 0;
+            $total_jumlah = $jumlah_jantan + $jumlah_betina;
 
-            if (!empty($data['jantan']) && $data['jantan'] > 0) {
-                $peternak->ternaks()->attach($ternak->id, [
+            if ($jumlah_jantan > 0) {
+                $peternak->ternakPeternaks()->create([
+                    'jenis_ternak' => $data['jenis_ternak'],
                     'jenis_kelamin' => 'Jantan',
-                    'jumlah' => $data['jantan'],
-                    'jenis_pakan' => $data['jenis_pakan'] ?? null,
-                    'penyakit' => $data['penyakit'] ?? null,
-                    'sistem_pemeliharaan' => $data['sistem_pemeliharaan'] ?? null,
+                    'jumlah' => $jumlah_jantan,
+                    'total_jumlah' => $total_jumlah,
+                    'riwayat_penyakit' => $data['riwayat_penyakit'] ?? null,
+                    'vitamin' => $data['vitamin'] ?? null,
+                    'keterangan' => $data['keterangan'] ?? null,
                 ]);
             }
 
-            // Simpan data betina jika diisi
-            if (!empty($data['betina']) && $data['betina'] > 0) {
-                $peternak->ternaks()->attach($ternak->id, [
+            if ($jumlah_betina > 0) {
+                $peternak->ternakPeternaks()->create([
+                    'jenis_ternak' => $data['jenis_ternak'],
                     'jenis_kelamin' => 'Betina',
-                    'jumlah' => $data['betina'],
-                    'jenis_pakan' => $data['jenis_pakan'] ?? null,
-                    'penyakit' => $data['penyakit'] ?? null,
-                    'sistem_pemeliharaan' => $data['sistem_pemeliharaan'] ?? null,
+                    'jumlah' => $jumlah_betina,
+                    'total_jumlah' => $total_jumlah,
+                    'riwayat_penyakit' => $data['riwayat_penyakit'] ?? null,
+                    'vitamin' => $data['vitamin'] ?? null,
+                    'keterangan' => $data['keterangan'] ?? null,
                 ]);
             }
         }
 
-        return redirect()->route('peternak.create')->with('success', 'Data berhasil disimpan');
+        return redirect()->route('admin.peternak.index')->with('success', 'Data berhasil disimpan');
     }
 }

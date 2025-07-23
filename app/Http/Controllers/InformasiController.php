@@ -16,10 +16,13 @@ class InformasiController extends Controller
     {
         $perPage = $request->input('per_page', 5);
         $beritas = $perPage === 'all'
-            ? Informasi::latest()->get()
-            : Informasi::latest()->paginate($perPage);
+            ? Informasi::with('lampiran')->latest()->get()
+            : Informasi::with('lampiran')->latest()->paginate($perPage);
 
-        return view('Admin.Informasi.informasi', compact('beritas'));
+        return view('Admin.Informasi.informasi', [
+            'beritas' => $beritas,
+            'selectedPerPage' => $perPage
+        ]);
     }
 
     /**
@@ -27,8 +30,7 @@ class InformasiController extends Controller
      */
     public function create()
     {
-        $desa = Desa::first();
-        return view('Admin.Informasi.form', compact('desa'));
+        return view('Admin.Informasi.form');
     }
 
     /**
@@ -37,21 +39,26 @@ class InformasiController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'desa_id' => 'required|exists:desa,id',
             'judul' => 'required|string|max:255',
             'deskripsi' => 'required',
             'kategori' => 'required|string|max:100',
             'penulis' => 'required|string|max:100',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'lampiran' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:5120',
         ]);
 
         // Proses upload gambar jika ada
-        if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('berita', 'public');
+        $informasi = Informasi::create($validated);
+
+        if ($request->hasFile('lampiran')) {
+            $file = $request->file('lampiran');
+            $path = $file->store('lampiran', 'public');
+
+            $informasi->lampiran()->create([
+                'file_path'     => $path,
+                'file_type'     => $file->extension(),
+                'original_name' => $file->getClientOriginalName(),
+            ]);
         }
-
-        Informasi::create($validated);
-
         return redirect()->route('admin.informasi.index')->with('success', 'Berita berhasil ditambahkan');
     }
 
@@ -60,7 +67,7 @@ class InformasiController extends Controller
      */
     public function show($id)
     {
-        $berita = Informasi::findOrFail($id);
+        $berita = Informasi::with('lampiran')->findOrFail($id);
         return view('Admin.Informasi.show', compact('berita'));
     }
 
@@ -69,7 +76,7 @@ class InformasiController extends Controller
      */
     public function edit($id)
     {
-        $berita = Informasi::findOrFail($id);
+        $berita = Informasi::with('lampiran')->findOrFail($id);
         return view('Admin.Informasi.form-edit', compact('berita'));
     }
 
@@ -80,23 +87,31 @@ class InformasiController extends Controller
     {
         $berita = Informasi::findOrFail($id);
         $validated = $request->validate([
-            'desa_id' => 'required|exists:desa,id',
             'judul' => 'required|string|max:255',
             'deskripsi' => 'required',
             'kategori' => 'required|string|max:100',
             'penulis' => 'required|string|max:100',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'lampiran' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:5120',
         ]);
 
-        // Proses upload gambar jika ada
-        if ($request->hasFile('image')) {
-            if ($berita->image) {
-                Storage::disk('public')->delete($berita->image);
-            }
-            $validated['image'] = $request->file('image')->store('berita', 'public');
-        }
 
         $berita->update($validated);
+        if ($request->hasFile('lampiran')) {
+            // Hapus lampiran lama
+            if ($berita->lampiran) {
+                Storage::disk('public')->delete($berita->lampiran->file_path);
+                $berita->lampiran()->delete();
+            }
+
+            $file = $request->file('lampiran');
+            $path = $file->store('lampiran', 'public');
+
+            $berita->lampiran()->create([
+                'file_path'     => $path,
+                'file_type'     => $file->extension(),
+                'original_name' => $file->getClientOriginalName(),
+            ]);
+        }
 
         return redirect()->route('admin.informasi.index')->with('success', 'Berita berhasil diperbarui');
     }
@@ -108,8 +123,9 @@ class InformasiController extends Controller
     {
         $berita = Informasi::findOrFail($id);
         // Hapus gambar jika ada
-        if ($berita->image) {
-            Storage::disk('public')->delete($berita->image);
+        if ($berita->lampiran) {
+            Storage::disk('public')->delete($berita->lampiran->file_path);
+            $berita->lampiran()->delete();
         }
 
         $berita->delete();

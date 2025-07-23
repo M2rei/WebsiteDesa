@@ -14,10 +14,11 @@
                     <span class="text-gray-700">Tampilkan</span>
                     <select
                         class="border border-gray-300 rounded px-3 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
+                        <option value="5" {{ $selectedPerPage == 5 ? 'selected' : '' }}>5</option>
+                        <option value="10" {{ $selectedPerPage == 10 ? 'selected' : '' }}>25</option>
+                        <option value="25" {{ $selectedPerPage == 25 ? 'selected' : '' }}>50</option>
+                        <option value="100" {{ $selectedPerPage == 100 ? 'selected' : '' }}>100</option>
+                        <option value="all" {{ $selectedPerPage == 'all' ? 'selected' : '' }}>Semua</option>
                     </select>
                     <span class="text-gray-700">baris</span>
                 </div>
@@ -148,52 +149,50 @@
 
         <!-- Pagination -->
         @if ($potensidesas->hasPages())
-            <div class="flex items-center justify-between">
-                <div class="text-sm text-gray-700">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
+                <div class="text-sm text-gray-600">
                     Menampilkan <span class="font-medium">{{ $potensidesas->firstItem() }}</span> sampai
                     <span class="font-medium">{{ $potensidesas->lastItem() }}</span> dari
-                    <span class="font-medium">{{ $potensidesas->total() }}</span> hasil
+                    <span class="font-medium">{{ $potensidesas->total() }}</span> data
                 </div>
 
-                <div class="flex items-center space-x-2">
+                <div class="flex items-center space-x-1">
+                    {{-- Previous Button --}}
                     @if ($potensidesas->onFirstPage())
-                        <button disabled
-                            class="px-3 py-2 text-sm text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
-                            Sebelumnya
-                        </button>
+                        <span class="px-3 py-1 rounded border text-gray-400 cursor-not-allowed">
+                            <i class="fas fa-chevron-left"></i>
+                        </span>
                     @else
-                        <a href="{{ $potensidesas->previousPageUrl() }}"
-                            class="px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                            Sebelumnya
+                        <a href="{{ $potensidesas->appends(['per_page' => request('per_page')])->previousPageUrl() }}"
+                            class="px-3 py-1 rounded border border-gray-300 hover:bg-gray-50">
+                            <i class="fas fa-chevron-left"></i>
                         </a>
                     @endif
 
-                    <div class="flex items-center space-x-1">
-                        @foreach ($potensidesas->getUrlRange(1, $potensidesas->lastPage()) as $page => $url)
-                            @if ($page == $potensidesas->currentPage())
-                                <span
-                                    class="px-3 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-md">
-                                    {{ $page }}
-                                </span>
-                            @else
-                                <a href="{{ $url }}"
-                                    class="px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                                    {{ $page }}
-                                </a>
-                            @endif
-                        @endforeach
-                    </div>
+                    {{-- Page Numbers --}}
+                    @foreach ($potensidesas->getUrlRange(1, $potensidesas->lastPage()) as $page => $url)
+                        @if ($page == $potensidesas->currentPage())
+                            <span class="px-3 py-1 rounded bg-blue-600 text-white">
+                                {{ $page }}
+                            </span>
+                        @else
+                            <a href="{{ $potensidesas->appends(['per_page' => request('per_page')])->url($page) }}"
+                                class="px-3 py-1 rounded border border-gray-300 hover:bg-gray-50">
+                                {{ $page }}
+                            </a>
+                        @endif
+                    @endforeach
 
+                    {{-- Next Button --}}
                     @if ($potensidesas->hasMorePages())
-                        <a href="{{ $potensidesas->nextPageUrl() }}"
-                            class="px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                            Selanjutnya
+                        <a href="{{ $potensidesas->appends(['per_page' => request('per_page')])->nextPageUrl() }}"
+                            class="px-3 py-1 rounded border border-gray-300 hover:bg-gray-50">
+                            <i class="fas fa-chevron-right"></i>
                         </a>
                     @else
-                        <button disabled
-                            class="px-3 py-2 text-sm text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
-                            Selanjutnya
-                        </button>
+                        <span class="px-3 py-1 rounded border text-gray-400 cursor-not-allowed">
+                            <i class="fas fa-chevron-right"></i>
+                        </span>
                     @endif
                 </div>
             </div>
@@ -232,6 +231,15 @@
 
 @push('scripts')
     <script>
+        function updatePerPage(value) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('per_page', value);
+
+            // Reset ke halaman pertama ketika mengubah jumlah item per halaman
+            url.searchParams.set('page', 1);
+
+            window.location.href = url.toString();
+        }
         // Delete functionality
         const deleteRouteTemplate = "{{ route('admin.potensi-desa.destroy', ['id' => '__ID__']) }}";
 

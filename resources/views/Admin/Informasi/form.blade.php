@@ -8,7 +8,6 @@
         @csrf
 
         <div class="space-y-6">
-            <input type="hidden" name="desa_id" value="{{ $desa->id }}">
             <!-- Judul Berita -->
             <div>
                 <label for="judul" class="block text-lg font-semibold text-gray-700 mb-2">Judul Berita</label>
@@ -52,7 +51,7 @@
                     <option value="Berita" {{ old('kategori') == 'Berita' ? 'selected' : '' }}>Berita</option>
                     <option value="Kegiatan" {{ old('kategori') == 'Kegiatan' ? 'selected' : '' }}>Kegiatan</option>
                     <option value="Layanan" {{ old('kategori') == 'Layanan' ? 'selected' : '' }}>Layanan</option>
-                    <option value="Pembangunan" {{ old('kategori') == 'Pembangunan' ? 'selected' : '' }}>Pembangunan
+                    <option value="Peraturan" {{ old('kategori') == 'Peraturan' ? 'selected' : '' }}>Peraturan
                     </option>
                 </select>
                 @error('kategori')
@@ -60,29 +59,35 @@
                 @enderror
             </div>
 
-            <!-- Upload Gambar -->
+            <!-- Upload Lampiran -->
             <div>
-                <label class="block text-lg font-semibold text-gray-700 mb-2">Gambar Berita</label>
+                <label class="block text-lg font-semibold text-gray-700 mb-2">Lampiran Informasi</label>
                 <div class="upload-area border-2 border-dashed border-blue-400 rounded-lg p-12 text-center bg-blue-50 hover:bg-blue-100 cursor-pointer"
-                    onclick="document.getElementById('image-input').click()">
+                    onclick="document.getElementById('lampiran-input').click()">
                     <div class="text-blue-500 mb-4">
                         <i class="fas fa-cloud-upload-alt text-5xl"></i>
                     </div>
-                    <p class="text-gray-700 font-medium mb-2">Unggah Gambar Berita</p>
+                    <p class="text-gray-700 font-medium mb-2">Unggah Lampiran Informasi</p>
                     <p class="text-gray-500 text-sm">Klik untuk memilih file atau drag & drop</p>
-                    <p class="text-gray-400 text-xs mt-2">Format: JPEG, PNG, JPG, GIF (Maks. 2MB)</p>
-                    <input type="file" id="image-input" name="image" accept="image/*" class="hidden"
-                        onchange="previewImage(this)">
+                    <p class="text-gray-400 text-xs mt-2">Format: JPEG, PNG, JPG, Pdf (Maks. 2MB)</p>
+                    <input type="file" id="lampiran-input" name="lampiran" accept="image/*,application/pdf"
+                        class="hidden" onchange="previewImage(this)">
                 </div>
-                @error('image')
+                @error('lampiran')
                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                 @enderror
 
-                <!-- Preview Gambar Baru -->
-                <div id="image-preview" class="text-center mt-6 hidden">
-                    <img id="preview-image" src="{{ asset('image/Landing Page.png') }}" alt="Preview Gambar"
-                        class="mx-auto rounded-lg border border-gray-200 shadow-sm" style="max-height: 300px;">
-                    <p class="text-gray-500 text-sm mt-2">Preview gambar</p>
+                <!-- Preview Lampiran -->
+                <div id="preview-container" class="text-center mt-6 hidden">
+                    <!-- Untuk gambar -->
+                    <img id="preview-image" class="mx-auto rounded-lg border border-gray-200 shadow-sm"
+                        style="max-height: 300px; display: none;">
+
+                    <!-- Untuk PDF -->
+                    <embed id="preview-pdf" type="application/pdf" class="mx-auto border border-gray-200 shadow-sm"
+                        width="100%" height="400px" style="display: none; max-width: 600px;" />
+
+                    <p class="text-gray-500 text-sm mt-2">Preview Lampiran</p>
                 </div>
             </div>
 
@@ -91,7 +96,7 @@
                 <button type="submit"
                     class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center">
                     <i class="fas fa-save mr-2"></i>
-                    Simpan Berita
+                    Simpan Informasi
                 </button>
                 <a href="{{ route('admin.informasi.index') }}"
                     class="bg-gray-500 hover:bg-gray-600 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center">
@@ -105,19 +110,37 @@
 
 @push('scripts')
     <script>
-        // Preview gambar
         function previewImage(input) {
+            const previewContainer = document.getElementById('preview-container');
+            const previewImage = document.getElementById('preview-image');
+            const previewPdf = document.getElementById('preview-pdf');
+
+            previewImage.style.display = 'none';
+            previewPdf.style.display = 'none';
+            previewContainer.classList.add('hidden');
+
             if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const fileType = file.type;
+
                 const reader = new FileReader();
+
                 reader.onload = function(e) {
-                    document.getElementById('preview-image').src = e.target.result;
-                    document.getElementById('image-preview').classList.remove('hidden');
+                    if (fileType.startsWith('image/')) {
+                        previewImage.src = e.target.result;
+                        previewImage.style.display = 'block';
+                        previewContainer.classList.remove('hidden');
+                    } else if (fileType === 'application/pdf') {
+                        previewPdf.src = e.target.result;
+                        previewPdf.style.display = 'block';
+                        previewContainer.classList.remove('hidden');
+                    }
                 };
-                reader.readAsDataURL(input.files[0]);
+
+                reader.readAsDataURL(file);
             }
         }
 
-        // Drag and drop functionality
         const uploadArea = document.querySelector('.upload-area');
         uploadArea.addEventListener('dragover', function(e) {
             e.preventDefault();
@@ -132,8 +155,8 @@
             uploadArea.classList.replace('bg-blue-100', 'bg-blue-50');
             const files = e.dataTransfer.files;
             if (files.length > 0) {
-                document.getElementById('image-input').files = files;
-                previewImage(document.getElementById('image-input'));
+                document.getElementById('lampiran-input').files = files;
+                previewImage(document.getElementById('lampiran-input'));
             }
         });
     </script>

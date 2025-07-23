@@ -9,10 +9,10 @@ class Informasi extends Model
     protected $table = 'informasi';
     protected $primaryKey = 'id';
 
-    protected $fillable = ['desa_id', 'judul', 'image', 'deskripsi','kategori', 'tanggal_publish', 'penulis'];
+    protected $fillable = ['judul', 'deskripsi', 'kategori', 'tanggal_publish', 'penulis'];
 
-    public function desa()
+    public function lampiran()
     {
-        return $this->belongsTo(Desa::class);
+        return $this->hasOne(Lampiran::class);
     }
 }

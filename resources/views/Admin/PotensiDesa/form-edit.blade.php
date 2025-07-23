@@ -8,8 +8,6 @@
         @csrf
         @method('PUT')
 
-        <input type="hidden" name="desa_id" value="{{ $potensidesa->desa_id }}">
-
         <div class="space-y-6">
             <div>
                 <label for="nama_potensi" class="block text-lg font-semibold text-gray-700 mb-2">Nama Potensi</label>

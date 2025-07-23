@@ -10,8 +10,29 @@
         <p class="text-gray-600 text-sm mb-2">Penulis: <strong>{{ $berita->penulis }}</strong></p>
         <p class="text-gray-600 text-sm mb-4">Kategori: {{ $berita->kategori }}</p>
 
-        @if ($berita->image)
-            <img src="{{ asset('storage/' . $berita->image) }}" alt="Gambar Berita" class="w-full max-w-lg rounded mb-4">
+        @if ($berita->lampiran)
+            <div class="mt-6">
+                <h3 class="text-lg font-semibold text-gray-700 mb-2">Lampiran Informasi:</h3>
+
+                @php
+                    $filePath = $berita->lampiran->file_path;
+                    $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+                @endphp
+
+                @if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+                    <img src="{{ asset('storage/' . $filePath) }}" alt="Lampiran" class="w-full max-w-md rounded border">
+                @elseif ($ext === 'pdf')
+                    <embed src="{{ asset('storage/' . $filePath) }}" type="application/pdf"
+                        class="w-full max-w-3xl border rounded" height="500px">
+                    <p class="text-sm mt-2 text-gray-600">File: {{ $berita->lampiran->original_name }}</p>
+                @else
+                    <a href="{{ asset('storage/' . $filePath) }}" target="_blank"
+                        class="inline-flex items-center space-x-2 text-blue-600 hover:underline">
+                        <i class="fas fa-file text-2xl"></i>
+                        <span>{{ $berita->lampiran->original_name }}</span>
+                    </a>
+                @endif
+            </div>
         @endif
 
         <div class="text-gray-800 leading-relaxed">

@@ -1,7 +1,7 @@
 @extends('layout.sidebar')
 
-@section('title', 'Dokument - Sistem Dokument Desa')
-@section('page-title', 'Dokument')
+@section('title', 'Pengajuan Surat Desa - Sistem Surat Desa')
+@section('page-title', 'Pengajuan Surat')
 
 @section('content')
     <div class="space-y-6">
@@ -29,16 +29,9 @@
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <i class="fas fa-search text-gray-400"></i>
                     </div>
-                    <input type="text" placeholder="Cari berita..."
+                    <input type="text" placeholder="Cari..."
                         class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-64">
                 </div>
-
-                <!-- Add Data Button -->
-                <a href="{{ route('admin.dokumen-desa.create') }}"
-                    class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center">
-                    <i class="fas fa-plus mr-2  "></i>
-                    Tambah Dokument
-                </a>
             </div>
         </div>
 
@@ -48,73 +41,49 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
-                                No
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jenis
+                                Surat</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama
                             </th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                <div class="flex items-center space-x-1">
-                                    <span>Status</span>
-                                    <i class="fas fa-sort text-gray-400"></i>
-                                </div>
-                            </th>
+                                Alamat</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                <div class="flex items-center space-x-1">
-                                    <span>Dokument</span>
-                                    <i class="fas fa-sort text-gray-400"></i>
-                                </div>
-                            </th>
+                                Tempat & Tgl Lahir</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                <div class="flex items-center space-x-1">
-                                    <span>Tanggal</span>
-                                    <i class="fas fa-sort text-gray-400"></i>
-                                </div>
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
-                                Aksi
+                                Tanggal Dibuat</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi
                             </th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        @forelse($suratdesas as $index => $suratdesa)
+                        @forelse ($suratdesas as $index => $suratdesa)
                             <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $index + 1 }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                <td class="px-6 py-4 text-sm text-gray-900">{{ $loop->iteration }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-900">{{ $suratdesa->jenis_surat }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-900">{{ $suratdesa->nama }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-900">{{ $suratdesa->alamat }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-900">{{ $suratdesa->tempat_tgl_lahir }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-900">
+                                    {{ \Carbon\Carbon::parse($suratdesa->created_at)->format('d M Y') }}</td>
+                                <td class="px-6 py-4">
                                     @php
                                         $status = strtolower($suratdesa->status);
                                         $statusColor = match ($status) {
                                             'diproses' => ['bg' => 'bg-yellow-100', 'text' => 'text-yellow-800'],
                                             'selesai' => ['bg' => 'bg-green-100', 'text' => 'text-green-800'],
+                                            default => ['bg' => 'bg-gray-100', 'text' => 'text-gray-800'],
                                         };
                                     @endphp
-
                                     <span
                                         class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $statusColor['bg'] }} {{ $statusColor['text'] }}">
                                         {{ ucfirst($suratdesa->status) }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-900">
-                                    @php
-                                        $extension = pathinfo($suratdesa->dokumen, PATHINFO_EXTENSION);
-                                    @endphp
-
-                                    <div class="flex items-center space-x-2">
-                                        @if ($extension === 'pdf')
-                                            <i class="fas fa-file-pdf text-red-600"></i>
-                                            <span class="text-sm text-red-700 font-medium">PDF</span>
-                                        @elseif ($extension === 'docx' || $extension === 'doc')
-                                            <i class="fas fa-file-word text-blue-600"></i>
-                                            <span class="text-sm text-blue-700 font-medium">Word</span>
-                                        @else
-                                            <i class="fas fa-file text-gray-600"></i>
-                                            <span
-                                                class="text-sm text-gray-600 font-medium">{{ strtoupper($extension) }}</span>
-                                        @endif
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    {{ $suratdesa->created_at->format('d/m/Y') }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <td class="px-6 py-4">
                                     <div class="flex items-center space-x-2">
                                         <a href="{{ route('admin.surat-desa.show', $suratdesa->id) }}"
                                             class="text-gray-600 hover:text-gray-900 p-1" title="Lihat">
@@ -129,9 +98,8 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">
-                                    Tidak ada data berita ditemukan
-                                </td>
+                                <td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">Tidak ada data
+                                    ditemukan.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -235,7 +203,7 @@
             const finalUrl = deleteRouteTemplate.replace('__ID__', id);
             deleteForm.action = finalUrl;
             deleteModal.classList.remove('hidden');
-            deleteModal.classList.add('flex'); // Agar modal tampil (Tailwind)
+            deleteModal.classList.add('flex');
         }
 
         function closeDeleteModal() {

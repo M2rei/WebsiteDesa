@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AnggotaStruktur;
 use App\Models\DokumenDesa;
 use App\Models\Informasi;
 use App\Models\PotensiDesa;
@@ -12,7 +13,8 @@ class PublicViewController extends Controller
 {
     public function index()
     {
-        return view('User.dashboard');
+        $anggotaStruktur = AnggotaStruktur::all();
+        return view('User.dashboard', compact('anggotaStruktur'));
     }
     public function indexProfileDesa()
     {
@@ -21,41 +23,29 @@ class PublicViewController extends Controller
     public function indexInformasi(Request $request)
     {
         $kategoriFilter = $request->query('kategori');
-        $semuaKategori = Informasi::select('kategori')->distinct()
-            ->union(DokumenDesa::where('kategori', 'peraturan')->select('kategori')->distinct())
-            ->pluck('kategori');
+        $search = $request->query('search');
+        $daftarKategori = Informasi::select('kategori')->distinct()->pluck('kategori');
 
-        // Informasi terfilter berdasarkan kategori
-        $informasi = Informasi::when($kategoriFilter, function ($query, $kategori) {
-            return $query->where('kategori', $kategori);
-        })->latest()->get();
+        $query = Informasi::with('lampiran')->latest();
 
-        // Dokumen kategori 'peraturan' (tanpa filter)
-        $dokumen = DokumenDesa::where('kategori', 'peraturan')->latest()->get();
+        if ($kategoriFilter) {
+            $query->where('kategori', $kategoriFilter);
+        }
 
-        // Informasi & Dokumen (tanpa filter) untuk informasi terbaru (3 gabungan)
-        $informasiTerbaru = Informasi::latest()->take(5)->get()->map(function ($item) {
-            $item->tipe = 'informasi';
-            return $item;
-        });
+        if ($search) {
+            $query->where('judul', 'like', '%' . $search . '%');
+        }
 
-        $dokumenTerbaru = DokumenDesa::where('kategori', 'peraturan')
-            ->latest()->take(5)->get()->map(function ($item) {
-                $item->tipe = 'dokumen';
-                return $item;
-            });
+        $informasi = $query->paginate(6);
+        $informasi->appends($request->query());
 
-        $gabunganTerbaru = $informasiTerbaru
-            ->merge($dokumenTerbaru)
-            ->sortByDesc('created_at')
-            ->take(3);
+        $informasiTerbaru = Informasi::with('lampiran')->latest()->take(6)->get();
 
         return view('user.informasi', compact(
             'informasi',
-            'dokumen',
-            'gabunganTerbaru',
+            'informasiTerbaru',
             'kategoriFilter',
-            'semuaKategori',
+            'daftarKategori'
         ));
     }
 
@@ -67,16 +57,23 @@ class PublicViewController extends Controller
     public function indexPotensiDesa(Request $request)
     {
         $kategoriFilter = $request->query('kategori');
+        $search = $request->query('search');
+
+        $semuaKategori = PotensiDesa::select('kategori')->distinct()->pluck('kategori');
 
         $query = PotensiDesa::query();
+
         if ($kategoriFilter) {
             $query->where('kategori', $kategoriFilter);
         }
 
-        $potensi = $query->latest()->paginate(6);
-        $semuaKategori = PotensiDesa::select('kategori')->distinct()->pluck('kategori');
+        if ($search) {
+            $query->where('nama_potensi', 'like', '%' . $search . '%');
+        }
 
-        return view('user.potensidesa', compact('potensi', 'semuaKategori', 'kategoriFilter'));
+        $potensi = $query->latest()->paginate(6)->appends($request->query());
+
+        return view('user.potensidesa', compact('potensi', 'semuaKategori', 'kategoriFilter', 'search'));
     }
     public function show_potensidesa($id)
     {
@@ -86,6 +83,7 @@ class PublicViewController extends Controller
     public function indexStrukturOrganisasi()
     {
         $strukturOrganisasi = StrukturOrganisasi::first();
-        return view('user.organisasi', compact('strukturOrganisasi'));
+        $anggotaStruktur = AnggotaStruktur::all();
+        return view('user.organisasi', compact('strukturOrganisasi', 'anggotaStruktur'));
     }
 }

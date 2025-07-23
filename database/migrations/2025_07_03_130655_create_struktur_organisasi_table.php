@@ -13,11 +13,8 @@ return new class extends Migration
     {
         Schema::create('struktur_organisasi', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('desa_id');
             $table->string('image');
             $table->timestamps();
-
-            $table->foreign('desa_id')->references('id')->on('desa')->onDelete('cascade');
         });
     }
 
