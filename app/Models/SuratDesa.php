@@ -8,7 +8,7 @@ class SuratDesa extends Model
 {
     protected $table = 'surat_desa';
     protected $primaryKey = 'id';
-    protected $fillable = ['jenis_surat','nama', 'nik', 'tempat_tgl_lahir', 'jenis_kelamin', 'agama', 'pekerjaan', 'alamat', 'catatan_pemohon', 'status'];
+    protected $fillable = ['jenis_surat','nama', 'nik', 'tempat_tgl_lahir', 'jenis_kelamin', 'agama', 'pekerjaan','no_telepon', 'alamat', 'catatan_pemohon', 'status'];
 
     public function dataPendukung()
     {

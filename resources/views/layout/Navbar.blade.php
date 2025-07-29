@@ -60,12 +60,10 @@
 </head>
 
 <body class="bg-gray-50">
-    <!-- Navigation -->
     <nav id="navbar"
         class="fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out bg-transparent text-white">
         <div class="container mx-auto px-4">
             <div class="flex items-center justify-between py-4">
-                <!-- Logo -->
                 <div class="flex items-center space-x-3">
                     <div class="inline-block">
                         <img src="{{ asset('storage/' . $desa->logo_url) }}" alt="Logo Desa"

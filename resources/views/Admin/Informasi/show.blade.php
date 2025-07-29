@@ -1,6 +1,6 @@
 @extends('layout.sidebar')
 
-@section('title', 'Detail Berita')
+@section('title', 'Detail Infromasi')
 @section('page-title', 'Detail Berita')
 
 @section('content')

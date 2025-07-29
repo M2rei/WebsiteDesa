@@ -1,9 +1,7 @@
 <?php
-
-use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\DesaController;
-use App\Http\Controllers\DokumenDesaController;
 use App\Http\Controllers\InformasiController;
 use App\Http\Controllers\PeternakController;
 use App\Http\Controllers\PotensiDesaController;
@@ -33,9 +31,6 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login')->
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::get('/password', [ForgotPasswordController::class, 'show'])->name('password.custom');
-Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLink'])->name('password.custom.email');
-Route::post('/password/reset', [ForgotPasswordController::class, 'reset'])->name('password.custom.reset');
 //SECTION - ADMIN\
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
@@ -93,3 +88,5 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/export', 'export')->name('export');
     });
 });
+Route::get('/auth/google', [SocialiteController::class, 'redirectToGoogle'])->name('auth.google.redirect');
+Route::get('/auth/callback/google', [SocialiteController::class, 'handleGoogleCallback']);

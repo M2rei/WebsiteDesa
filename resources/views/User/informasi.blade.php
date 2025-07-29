@@ -3,13 +3,10 @@
 @section('title', 'Informasi - Desa Ngrejo Kabupaten Blitar Jawa Timur')
 
 @section('content')
-    <!-- Hero Section -->
     <section class="relative bg-primary-800 text-white py-20 overflow-hidden">
         <div class="absolute inset-0 z-0 bg-cover bg-center opacity-50"
             style="background-image: url('{{ asset('image/background/1.JPG') }}')">
         </div>
-
-        <!-- Content -->
         <div class="relative z-10 container mx-auto px-4">
             <div class="max-w-4xl mx-auto text-center mt-6">
                 <h1 class="text-5xl font-bold mb-6">Informasi Desa</h1>
@@ -27,7 +24,6 @@
                     @foreach ($informasiTerbaru as $item)
                         <article
                             class="relative bg-white rounded-2xl overflow-hidden shadow hover:shadow-lg transition-all border group">
-                            <!-- Invisible clickable layer -->
                             <a href="{{ route('user.informasi.show', $item->id) }}" class="absolute inset-0 z-10"></a>
 
                             @php
@@ -86,13 +82,10 @@
         </div>
     </section>
 
-    <!-- Filter Dropdown Section -->
-    <section class="py-10 bg-white border-b">
+    <div class="py-10 bg-white border-b">
         <div class="container mx-auto px-4">
             <form action="{{ route('user.informasi') }}" method="GET"
                 class="w-full max-w-4xl mx-auto grid gap-4 md:grid-cols-3 items-end">
-
-                <!-- Dropdown Kategori -->
                 <div x-data="{ open: false }" class="relative w-full">
                     <button @click="open = !open" type="button"
                         class="flex justify-between items-center w-full px-4 py-2 text-sm border rounded-lg bg-white">
@@ -116,7 +109,6 @@
                     </div>
                 </div>
 
-                <!-- Input Pencarian -->
                 <div class="md:col-span-2">
                     <label for="search" class="block text-sm font-semibold text-gray-700 mb-1">Pencarian Judul</label>
                     <div class="flex rounded-lg shadow-sm">
@@ -132,7 +124,7 @@
                 </div>
             </form>
         </div>
-    </section>
+    </div>
 
 
     <!-- Semua Informasi -->
@@ -153,8 +145,8 @@
                 @else
                     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
                         @foreach ($informasi as $item)
-                            <article
-                                class="bg-white rounded-2xl overflow-hidden shadow hover:shadow-lg transition-all border">
+                            <article class="relative bg-white rounded-2xl overflow-hidden shadow hover:shadow-lg transition-all border group">
+                                <a href="{{ route('user.informasi.show', $item->id) }}" class="absolute inset-0 z-10"></a>
                                 <div class="relative">
                                     @php
                                         $lampiran = $item->lampiran;
@@ -230,7 +222,6 @@
                         </div>
 
                         <div class="flex items-center space-x-1">
-                            <!-- Previous Button -->
                             @if ($informasi->onFirstPage())
                                 <span class="px-3 py-1 rounded border text-gray-400 cursor-not-allowed">
                                     <i class="fas fa-chevron-left"></i>
@@ -242,7 +233,6 @@
                                 </a>
                             @endif
 
-                            <!-- Page Numbers -->
                             @foreach ($informasi->getUrlRange(1, $informasi->lastPage()) as $page => $url)
                                 @if ($page == $informasi->currentPage())
                                     <span class="px-3 py-1 rounded bg-primary-600 text-white">
@@ -255,8 +245,6 @@
                                     </a>
                                 @endif
                             @endforeach
-
-                            <!-- Next Button -->
                             @if ($informasi->hasMorePages())
                                 <a href="{{ $informasi->nextPageUrl() }}"
                                     class="px-3 py-1 rounded border border-gray-300 hover:bg-gray-50">
@@ -277,7 +265,6 @@
 
 @push('scripts')
     <script>
-        // Smooth scrolling animation
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
@@ -293,7 +280,6 @@
         }, observerOptions);
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Add initial styles for animation
             const sections = document.querySelectorAll('section');
             sections.forEach((section, index) => {
                 section.style.opacity = '0';
@@ -303,7 +289,6 @@
                 observer.observe(section);
             });
 
-            // Add parallax effect to hero section
             window.addEventListener('scroll', () => {
                 const scrolled = window.pageYOffset;
                 const hero = document.querySelector('section');
@@ -312,7 +297,6 @@
                 }
             });
 
-            // Add counter animation for statistics
             const counters = document.querySelectorAll('h3');
             const animateCounters = () => {
                 counters.forEach(counter => {
@@ -336,7 +320,6 @@
                 });
             };
 
-            // Trigger counter animation when statistics section is visible
             const statsSection = document.querySelector('.bg-primary-800');
             if (statsSection) {
                 const statsObserver = new IntersectionObserver((entries) => {

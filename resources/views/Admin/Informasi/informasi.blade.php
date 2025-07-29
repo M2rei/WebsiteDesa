@@ -5,10 +5,8 @@
 
 @section('content')
     <div class="space-y-6">
-        <!-- Header Controls -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div class="flex items-center space-x-4">
-                <!-- Show entries dropdown -->
                 <div class="flex items-center space-x-2">
                     <span class="text-gray-700">Tampilkan</span>
                     <select
@@ -24,7 +22,6 @@
             </div>
 
             <div class="flex items-center space-x-4">
-                <!-- Search -->
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <i class="fas fa-search text-gray-400"></i>
@@ -33,7 +30,6 @@
                         class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-64">
                 </div>
 
-                <!-- Add Data Button -->
                 <a href="{{ route('admin.informasi.create') }}"
                     class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center">
                     <i class="fas fa-plus mr-2"></i>
@@ -41,8 +37,6 @@
                 </a>
             </div>
         </div>
-
-        <!-- Data Table -->
         <div class="bg-white rounded-lg shadow overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
@@ -134,7 +128,9 @@
                                     <div class="max-w-xs font-medium">{{ $berita->judul }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $berita->penulis }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $berita->deskripsi }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ \Illuminate\Support\Str::limit(strip_tags($berita->deskripsi), 50, '...') }}
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                     {{ $berita->created_at->format('d/m/Y') }}
                                 </td>
@@ -167,7 +163,6 @@
             </div>
         </div>
 
-        <!-- Pagination -->
         @if ($beritas->hasPages())
             <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
                 <div class="text-sm text-gray-600">
@@ -177,7 +172,6 @@
                 </div>
 
                 <div class="flex items-center space-x-1">
-                    {{-- Previous Button --}}
                     @if ($beritas->onFirstPage())
                         <span class="px-3 py-1 rounded border text-gray-400 cursor-not-allowed">
                             <i class="fas fa-chevron-left"></i>
@@ -189,7 +183,6 @@
                         </a>
                     @endif
 
-                    {{-- Page Numbers --}}
                     @foreach ($beritas->getUrlRange(1, $beritas->lastPage()) as $page => $url)
                         @if ($page == $beritas->currentPage())
                             <span class="px-3 py-1 rounded bg-blue-600 text-white">
@@ -203,7 +196,6 @@
                         @endif
                     @endforeach
 
-                    {{-- Next Button --}}
                     @if ($beritas->hasMorePages())
                         <a href="{{ $beritas->appends(['per_page' => request('per_page')])->nextPageUrl() }}"
                             class="px-3 py-1 rounded border border-gray-300 hover:bg-gray-50">
@@ -219,7 +211,6 @@
         @endif
     </div>
 
-    <!-- Delete Confirmation Modal -->
     <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 items-center justify-center">
         <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
             <div class="flex items-center mb-4">
@@ -254,13 +245,10 @@
         function updatePerPage(value) {
             const url = new URL(window.location.href);
             url.searchParams.set('per_page', value);
-
-            // Reset ke halaman pertama ketika mengubah jumlah item per halaman
             url.searchParams.set('page', 1);
 
             window.location.href = url.toString();
         }
-        // Delete functionality
         const deleteRouteTemplate = "{{ route('admin.informasi.destroy', ['id' => '__ID__']) }}";
 
         function showDeleteModal(id) {
@@ -270,7 +258,7 @@
             const finalUrl = deleteRouteTemplate.replace('__ID__', id);
             deleteForm.action = finalUrl;
             deleteModal.classList.remove('hidden');
-            deleteModal.classList.add('flex'); // Agar modal tampil (Tailwind)
+            deleteModal.classList.add('flex');
         }
 
         function closeDeleteModal() {
@@ -279,7 +267,6 @@
             deleteModal.classList.remove('flex');
         }
 
-        // Search functionality
         document.querySelector('input[placeholder="Cari berita..."]').addEventListener('input', function(e) {
             const searchTerm = e.target.value.toLowerCase();
             const rows = document.querySelectorAll('tbody tr');
@@ -294,7 +281,6 @@
             });
         });
 
-        // Entries per page functionality
         document.querySelector('select').addEventListener('change', function(e) {
             const value = e.target.value;
             if (value === 'all') {

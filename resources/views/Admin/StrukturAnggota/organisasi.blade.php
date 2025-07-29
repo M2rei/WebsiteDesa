@@ -5,10 +5,8 @@
 
 @section('content')
     <div class="space-y-6">
-        <!-- Header Controls -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div class="flex items-center space-x-4">
-                <!-- Show entries dropdown -->
                 <div class="flex items-center space-x-2">
                     <span class="text-gray-700">Tampilkan</span>
                     <select
@@ -22,7 +20,6 @@
             </div>
 
             <div class="flex items-center space-x-4">
-                <!-- Search -->
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <i class="fas fa-search text-gray-400"></i>
@@ -31,7 +28,6 @@
                         class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-64">
                 </div>
 
-                <!-- Add Data Button -->
                 <a href="{{ route('admin.struktur-organisasi.create') }}"
                     class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center">
                     <i class="fas fa-plus mr-2"></i>
@@ -40,7 +36,6 @@
             </div>
         </div>
 
-        <!-- Data Table -->
         <div class="bg-white rounded-lg shadow overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
@@ -126,7 +121,6 @@
             </div>
         </div>
 
-        <!-- Pagination -->
         @if ($anggotaStrukturs->hasPages())
             <div class="flex items-center justify-between">
                 <div class="text-sm text-gray-700">
@@ -180,7 +174,6 @@
         @endif
     </div>
 
-    <!-- Delete Confirmation Modal -->
     <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 items-center justify-center">
         <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
             <div class="flex items-center mb-4">
@@ -218,7 +211,6 @@
             @csrf
             @method('PUT')
 
-            <!-- Upload Struktur Organisasi -->
             <div>
                 <div class="upload-area border-2 border-dashed border-blue-400 rounded-lg p-12 text-center
                         bg-blue-50 hover:bg-blue-100 cursor-pointer"
@@ -229,15 +221,12 @@
                     <p class="text-gray-700 font-medium mb-2">Unggah gambar struktur</p>
                     <p class="text-gray-500 text-sm">Klik untuk memilih file atau drag & drop</p>
 
-                    <!-- gunakan name="image" -->
                     <input type="file" id="image-input" name="image" accept="image/*" class="hidden"
                         onchange="previewImage(this)">
                 </div>
                 @error('image')
                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                 @enderror
-
-                {{-- tampilkan gambar saat ini --}}
                 @if (!empty($strukturOrganisasi->image))
                     <div class="text-center mt-6">
                         <img src="{{ asset('storage/' . $strukturOrganisasi->image) }}" alt="Struktur Organisasi"
@@ -246,15 +235,12 @@
                     </div>
                 @endif
 
-                {{-- preview gambar baru --}}
                 <div id="image-preview" class="text-center mt-6 hidden">
                     <img id="preview-image" src="/placeholder.svg" alt="Preview gambar"
                         class="mx-auto rounded-lg border border-gray-200 shadow-sm" style="max-height: 300px;">
                     <p class="text-gray-500 text-sm mt-2">Preview gambar baru</p>
                 </div>
             </div>
-
-            <!-- Tombol aksi -->
             <div class="flex space-x-4 pt-6">
                 <button type="submit"
                     class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center">
@@ -271,7 +257,6 @@
 
 @push('scripts')
     <script>
-        // Delete functionality
         const deleteRouteTemplate = "{{ route('admin.struktur-organisasi.destroy', ['id' => '__ID__']) }}";
 
         function showDeleteModal(id) {
@@ -289,8 +274,6 @@
             deleteModal.classList.add('hidden');
             deleteModal.classList.remove('flex');
         }
-
-        // Search functionality
         document.querySelector('input[placeholder="Cari"]').addEventListener('input', function(e) {
             const searchTerm = e.target.value.toLowerCase();
             const rows = document.querySelectorAll('tbody tr');
@@ -305,7 +288,6 @@
             });
         });
 
-        // Entries per page functionality
         document.querySelector('select').addEventListener('change', function(e) {
             const value = e.target.value;
             if (value === 'all') {
@@ -314,7 +296,6 @@
                 window.location.href = "{{ route('admin.struktur-organisasi.index') }}?per_page=" + value;
             }
         });
-        // Preview
         function previewImage(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -326,7 +307,6 @@
             }
         }
 
-        // Drag & drop
         const area = document.querySelector('.upload-area');
         area.addEventListener('dragover', e => {
             e.preventDefault();

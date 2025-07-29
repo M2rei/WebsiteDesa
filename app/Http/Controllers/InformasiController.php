@@ -46,7 +46,6 @@ class InformasiController extends Controller
             'lampiran' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:5120',
         ]);
 
-        // Proses upload gambar jika ada
         $informasi = Informasi::create($validated);
 
         if ($request->hasFile('lampiran')) {
@@ -97,7 +96,6 @@ class InformasiController extends Controller
 
         $berita->update($validated);
         if ($request->hasFile('lampiran')) {
-            // Hapus lampiran lama
             if ($berita->lampiran) {
                 Storage::disk('public')->delete($berita->lampiran->file_path);
                 $berita->lampiran()->delete();
@@ -122,12 +120,9 @@ class InformasiController extends Controller
     public function destroy($id)
     {
         $berita = Informasi::findOrFail($id);
-        // Hapus gambar jika ada
-        if ($berita->lampiran) {
+        if (Storage::disk('public')->exists($berita->lampiran->file_path)) {
             Storage::disk('public')->delete($berita->lampiran->file_path);
-            $berita->lampiran()->delete();
         }
-
         $berita->delete();
 
         return redirect()->route('admin.informasi.index')->with('success', 'Berita berhasil dihapus');

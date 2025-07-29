@@ -1,14 +1,12 @@
 @extends('layout.sidebar')
 
-@section('title', 'Pengajuan Surat Desa - Sistem Surat Desa')
-@section('page-title', 'Pengajuan Surat')
+@section('title', 'Surat Desa - Sistem Surat Desa')
+@section('page-title', 'Surat Desa')
 
 @section('content')
     <div class="space-y-6">
-        <!-- Header Controls -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div class="flex items-center space-x-4">
-                <!-- Show entries dropdown -->
                 <div class="flex items-center space-x-2">
                     <span class="text-gray-700">Tampilkan</span>
                     <select
@@ -24,7 +22,6 @@
             </div>
 
             <div class="flex items-center space-x-4">
-                <!-- Search -->
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <i class="fas fa-search text-gray-400"></i>
@@ -35,7 +32,6 @@
             </div>
         </div>
 
-        <!-- Data Table -->
         <div class="bg-white rounded-lg shadow overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
@@ -107,7 +103,6 @@
             </div>
         </div>
 
-        <!-- Pagination -->
         @if ($suratdesas->hasPages())
             <div class="flex items-center justify-between">
                 <div class="text-sm text-gray-700">
@@ -161,7 +156,6 @@
         @endif
     </div>
 
-    <!-- Delete Confirmation Modal -->
     <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 items-center justify-center">
         <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
             <div class="flex items-center mb-4">
@@ -193,7 +187,6 @@
 
 @push('scripts')
     <script>
-        // Delete functionality
         const deleteRouteTemplate = "{{ route('admin.surat-desa.destroy', ['id' => '__ID__']) }}";
 
         function showDeleteModal(id) {
@@ -212,7 +205,6 @@
             deleteModal.classList.remove('flex');
         }
 
-        // Search functionality
         document.querySelector('input[placeholder="Cari berita..."]').addEventListener('input', function(e) {
             const searchTerm = e.target.value.toLowerCase();
             const rows = document.querySelectorAll('tbody tr');
@@ -227,7 +219,6 @@
             });
         });
 
-        // Entries per page functionality
         document.querySelector('select').addEventListener('change', function(e) {
             const value = e.target.value;
             if (value === 'all') {

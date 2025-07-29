@@ -9,7 +9,7 @@
             <div class="max-w-4xl ml-20">
                 <h1 class="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight animate-fade-in-up">
                     Selamat Datang<br>
-                    <span class="text-blue-200">Di website Pemerintahan</span><br>
+                    <span class="text-blue-200">di Website Pemerintahan</span><br>
                     Desa Ngrejo
                 </h1>
                 <p class="text-xl text-blue-100 mb-8 max-w-2xl animate-fade-in-up delay-100">
@@ -209,7 +209,6 @@
                 observer.observe(section);
             });
 
-            // Add parallax effect to hero section
             window.addEventListener('scroll', () => {
                 const scrolled = window.pageYOffset;
                 const hero = document.querySelector('.hero-bg');

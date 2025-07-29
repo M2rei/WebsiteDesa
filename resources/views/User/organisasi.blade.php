@@ -3,7 +3,6 @@
 @section('title', 'Struktur Organisasi - Desa Ngrejo Kabupaten Blitar Jawa Timur')
 
 @section('content')
-    <!-- Hero -->
     <section class="relative bg-primary-800 text-white py-20 overflow-hidden">
         <div class="absolute inset-0 z-0 bg-cover bg-center opacity-50"
             style="background-image: url('{{ asset('image/background/1.JPG') }}')">
@@ -34,16 +33,6 @@
     <!-- Deskripsi & Anggota Struktur -->
     <section class="bg-gray-50 py-16">
         <div class="container mx-auto px-4">
-            <div class="max-w-4xl mx-auto text-center mb-10">
-                <h2 class="text-2xl font-bold text-gray-800 mb-4">Deskripsi Struktur Pemerintahan</h2>
-                <p class="text-gray-600 leading-relaxed">
-                    Struktur organisasi desa Ngrejo terdiri dari Kepala Desa, Sekretaris Desa, Kepala Urusan, dan Kepala
-                    Seksi
-                    yang bekerja sama untuk menyelenggarakan pemerintahan desa. Setiap jabatan memiliki peran dan tanggung
-                    jawab
-                    sesuai dengan tugas pokok dan fungsinya demi melayani masyarakat dengan maksimal.
-                </p>
-            </div>
 
             <div class="text-center mb-8">
                 <h3 class="text-xl font-semibold text-gray-800 mb-4">Daftar Anggota Struktur Organisasi</h3>
@@ -74,7 +63,6 @@
 
 @push('scripts')
     <script>
-        // Smooth scrolling animation
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
@@ -90,7 +78,6 @@
         }, observerOptions);
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Add initial styles for animation
             const sections = document.querySelectorAll('section');
             sections.forEach((section, index) => {
                 section.style.opacity = '0';
@@ -100,7 +87,6 @@
                 observer.observe(section);
             });
 
-            // Add parallax effect to hero section
             window.addEventListener('scroll', () => {
                 const scrolled = window.pageYOffset;
                 const hero = document.querySelector('section');
@@ -109,7 +95,6 @@
                 }
             });
 
-            // Add counter animation for statistics
             const counters = document.querySelectorAll('h3');
             const animateCounters = () => {
                 counters.forEach(counter => {
@@ -133,7 +118,6 @@
                 });
             };
 
-            // Trigger counter animation when statistics section is visible
             const statsSection = document.querySelector('.bg-primary-800');
             if (statsSection) {
                 const statsObserver = new IntersectionObserver((entries) => {

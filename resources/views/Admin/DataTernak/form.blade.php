@@ -1,7 +1,7 @@
 @extends('layout.sidebar')
 
-@section('title', 'Informasi - Sistem Informasi Desa')
-@section('page-title', 'Informasi')
+@section('title', 'Data Ternak - Sistem Informasi Desa')
+@section('page-title', 'Data Ternak')
 
 @section('content')
     @if (session('success'))
@@ -34,17 +34,20 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div>
-                    <label class="block font-medium text-gray-700 mb-1">Tanggal Mulai</label>
-                    <input type="date" name="tanggal_mulai" class="w-full px-4 py-2 border rounded-lg" required>
-                </div>
-                <div>
-                    <label class="block font-medium text-gray-700 mb-1">Tanggal Selesai</label>
-                    <input type="date" name="tanggal_selesai" class="w-full px-4 py-2 border rounded-lg" required>
+                    <label class="block font-medium text-gray-700 mb-1">Periode</label>
+                    <select name="periode" class="border rounded px-3 py-2">
+                        <option value="">Pilih Periode</option>
+                        <option value="Januari - Juni" {{ request('periode') == 'Januari - Juni' ? 'selected' : '' }}>
+                            Januari - Juni</option>
+                        <option value="Juli - Desember" {{ request('periode') == 'Juli - Desember' ? 'selected' : '' }}>Juli
+                            - Desember</option>
+                    </select>
+                    <input type="text" name="tahun" min="2000" max="{{ date('Y') }}"
+                        class="border px-3 py-2 rounded" placeholder="Tahun contoh: 2025" value="{{ request('tahun') }}">
                 </div>
             </div>
 
             <div id="ternak-form-list" class="space-y-6">
-                <!-- Ternak Awal -->
                 <div class="ternak-form bg-blue-50 p-4 rounded-lg border">
                     <h3 class="font-semibold text-lg mb-4">Ternak #1</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -69,7 +72,7 @@
                                 class="w-full px-4 py-2 border rounded-lg">
                         </div>
                         <div>
-                            <label>tgl Terakhir Vitamin</label>
+                            <label>tanggal Terakhir Vitamin</label>
                             <input type="date" name="ternaks[0][vitamin]" class="w-full px-4 py-2 border rounded-lg">
                         </div>
                         <div class="md:col-span-2">
@@ -122,7 +125,12 @@
         }
 
         function removeTernak(button) {
-            button.closest('.ternak-form').remove();
+            const allForms = document.querySelectorAll('.ternak-form');
+            if (allForms.length > 1) {
+                button.closest('.ternak-form').remove();
+            } else {
+                alert('Minimal harus ada 1 data ternak.');
+            }
         }
     </script>
 @endpush

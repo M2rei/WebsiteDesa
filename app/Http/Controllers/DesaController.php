@@ -55,7 +55,7 @@ class DesaController extends Controller
             return redirect()->route('admin.profile.index')->with('error', 'Data desa tidak ditemukan');
         }
 
-        $request->validate([
+        $validated = $request->validate([
             'profile_desa' => 'required|string',
             'sejarah' => 'required|string',
             'visi' => 'required|string',
@@ -66,23 +66,15 @@ class DesaController extends Controller
         ]);
 
         if ($request->hasFile('logo')) {
-            // Hapus logo lama jika ada
             if ($desa->logo_url && Storage::disk('public')->exists($desa->logo_url)) {
                 Storage::disk('public')->delete($desa->logo_url);
             }
 
-            // Simpan logo baru
             $logoPath = $request->file('logo')->store('logos', 'public');
-            $desa->logo_url = $logoPath;
+            $validated['logo_url'] = $logoPath;
         }
 
-        $desa->profile_desa = $request->profile_desa;
-        $desa->sejarah = $request->sejarah;
-        $desa->visi = $request->visi;
-        $desa->misi = $request->misi;
-        $desa->nomor_telepon = $request->nomor_telepon;
-        $desa->email = $request->email;
-        $desa->save();
+        $desa->update($validated);
 
         return redirect()->route('admin.profile.index')->with('success', 'Data desa berhasil diperbarui');
     }

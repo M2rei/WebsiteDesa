@@ -86,9 +86,10 @@ class PotensiDesaController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            if ($id->image) {
+            if ($potensidesa->image && Storage::disk('public')->exists($potensidesa->image)) {
                 Storage::disk('public')->delete($potensidesa->image);
             }
+
             $validated['image'] = $request->file('image')->store('potensidesa', 'public');
         }
 

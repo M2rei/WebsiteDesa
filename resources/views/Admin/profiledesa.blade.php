@@ -92,25 +92,18 @@
             </div>
         </div>
 
-        <!-- Action Buttons -->
         <div class="flex space-x-4 pt-6">
             <button type="submit"
                 class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center">
                 <i class="fas fa-save mr-2"></i>
                 Simpan
             </button>
-            {{-- <a href=""
-                class="bg-gray-500 hover:bg-gray-600 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center">
-                <i class="fas fa-times mr-2"></i>
-                Batal
-            </a> --}}
         </div>
     </form>
 @endsection
 
 @push('scripts')
     <script>
-        // Logo preview
         function previewLogo(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -122,7 +115,6 @@
             }
         }
 
-        // Drag and Drop
         const uploadArea = document.querySelector('.upload-area');
         uploadArea.addEventListener('dragover', function(e) {
             e.preventDefault();

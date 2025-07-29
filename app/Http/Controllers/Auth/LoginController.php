@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Desa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -10,7 +11,8 @@ class LoginController extends Controller
 {
     public function showLoginForm()
     {
-        return view('login');
+        $profiledesa = Desa::first();
+        return view('login', compact('profiledesa'));
     }
 
     public function login(Request $request)
@@ -22,7 +24,6 @@ class LoginController extends Controller
             'password' => 'required',
         ]);
 
-        // Attempt login
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             return redirect()->intended('/admin/profile');

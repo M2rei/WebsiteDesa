@@ -84,7 +84,6 @@ class StrukturOrganisasiController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            // simpan ke storage/app/public/images
             $path = $request->file('image')->store('images', 'public');
             $struktur->image = $path;
         }
@@ -104,16 +103,16 @@ class StrukturOrganisasiController extends Controller
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        if ($request->hasFile('foto')) {
-            if ($id->image) {
-                Storage::disk('public')->delete($anggotaStruktur->image);
-            }
-            $validated['foto'] = $request->file('foto')->store('struktur_anggota', 'public');
+    if ($request->hasFile('foto')) {
+        if ($anggotaStruktur->foto && Storage::disk('public')->exists($anggotaStruktur->foto)) {
+            Storage::disk('public')->delete($anggotaStruktur->foto);
         }
 
+        $validated['foto'] = $request->file('foto')->store('struktur_anggota', 'public');
+    }
 
         $anggotaStruktur->update($validated);
-        return redirect()->route('admin.struktur-organisasi.index')->with('success', 'Struktur Anggota berhasil ditambahkan');
+        return redirect()->route('admin.struktur-organisasi.index')->with('success', 'Struktur Anggota berhasil diupdate');
     }
 
     /**

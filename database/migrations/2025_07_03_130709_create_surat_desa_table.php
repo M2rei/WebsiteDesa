@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('jenis_kelamin');
             $table->string('agama');
             $table->string('pekerjaan');
+            $table->string('no_telepon');
             $table->string('alamat');
             $table->string('catatan_pemohon')->nullable();
             $table->enum('status', ['diproses', 'selesai'])->default('diproses');

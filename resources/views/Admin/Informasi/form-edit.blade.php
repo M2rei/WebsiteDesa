@@ -1,7 +1,7 @@
 @extends('layout.sidebar')
 
-@section('title', 'Edit Berita')
-@section('page-title', 'Edit Berita')
+@section('title', 'Edit Informasi')
+@section('page-title', 'Edit Informasi')
 
 @section('content')
     <form action="{{ route('admin.informasi.update', $berita->id) }}" method="POST" enctype="multipart/form-data">
@@ -83,7 +83,6 @@
                     </div>
                 @endif
 
-                {{-- Preview Baru --}}
                 <div id="preview-container" class="text-center mt-6 hidden">
                     <img id="preview-image" class="mx-auto rounded-lg border border-gray-200 shadow-sm"
                         style="max-height: 300px; display: none;">
@@ -92,40 +91,6 @@
                     <p class="text-gray-500 text-sm mt-2">Preview Lampiran Baru</p>
                 </div>
             </div>
-
-
-            {{-- <div>
-                <label for="lampiran" class="block text-lg font-semibold text-gray-700 mb-2">Lampiran (Gambar / PDF)</label>
-                @if ($berita->lampiran)
-                    @php
-                        $filePath = $berita->lampiran->file_path;
-                        $isImage = preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $filePath);
-                        $isPdf = preg_match('/\.pdf$/i', $filePath);
-                    @endphp
-
-                    <div class="mb-4">
-                        @if ($isImage)
-                            <img src="{{ asset('storage/' . $filePath) }}" alt="Lampiran" class="w-full max-w-sm rounded">
-                        @elseif ($isPdf)
-                            <a href="{{ asset('storage/' . $filePath) }}" target="_blank"
-                                class="inline-flex items-center space-x-2 text-red-600 hover:underline">
-                                <i class="fas fa-file-pdf text-2xl"></i>
-                                <span>{{ $berita->lampiran->original_name }}</span>
-                            </a>
-                        @else
-                            <a href="{{ asset('storage/' . $filePath) }}" target="_blank"
-                                class="inline-flex items-center space-x-2 text-gray-600 hover:underline">
-                                <i class="fas fa-file text-2xl"></i>
-                                <span>{{ $berita->lampiran->original_name }}</span>
-                            </a>
-                        @endif
-                    </div>
-                @endif
-
-                <input type="file" name="lampiran" class="w-full">
-                <p class="text-sm text-gray-500 mt-2">Kosongkan jika tidak ingin mengganti lampiran.</p>
-            </div> --}}
-
             <div class="pt-6">
                 <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full">
                     Simpan Perubahan
@@ -176,7 +141,6 @@
             }
         }
 
-        // Drag & Drop support
         const uploadArea = document.querySelector('.upload-area');
         uploadArea.addEventListener('dragover', function(e) {
             e.preventDefault();

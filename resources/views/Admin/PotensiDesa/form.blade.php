@@ -1,14 +1,13 @@
 @extends('layout.sidebar')
 
-@section('title', 'Tambah Berita - Sistem Informasi Desa')
-@section('page-title', 'Tambah Berita Baru')
+@section('title', 'Tambah  Potensi Desa - Sistem Informasi Desa')
+@section('page-title', 'Tambah  Potensi Desa')
 
 @section('content')
     <form action="{{ route('admin.potensi-desa.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         <div class="space-y-6">
-            <!-- nama_potensi -->
             <div>
                 <label for="nama_potensi" class="block text-lg font-semibold text-gray-700 mb-2">Nama Potensi</label>
                 <input type="text" id="nama_potensi" name="nama_potensi" value="{{ old('nama_potensi') }}"
@@ -19,7 +18,6 @@
                 @enderror
             </div>
 
-            <!-- Konten Berita -->
             <div>
                 <label for="deskripsi" class="block text-lg font-semibold text-gray-700 mb-2">Deskripsi</label>
                 <textarea id="deskripsi" name="deskripsi"
@@ -30,7 +28,6 @@
                 @enderror
             </div>
 
-            <!-- Kategori -->
             <div>
                 <label for="kategori" class="block text-lg font-semibold text-gray-700 mb-2">Kategori</label>
                 <select id="kategori" name="kategori"
@@ -45,7 +42,6 @@
                 @enderror
             </div>
 
-            <!-- Upload Gambar -->
             <div>
                 <label class="block text-lg font-semibold text-gray-700 mb-2">Gambar Potensi Desa</label>
                 <div class="upload-area border-2 border-dashed border-blue-400 rounded-lg p-12 text-center bg-blue-50 hover:bg-blue-100 cursor-pointer"
@@ -63,7 +59,6 @@
                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                 @enderror
 
-                <!-- Preview Gambar Baru -->
                 <div id="image-preview" class="text-center mt-6 hidden">
                     <img id="preview-image" src="{{ asset('image/Landing Page.png') }}" alt="Preview Gambar"
                         class="mx-auto rounded-lg border border-gray-200 shadow-sm" style="max-height: 300px;">
@@ -71,7 +66,6 @@
                 </div>
             </div>
 
-            <!-- Tombol Aksi -->
             <div class="flex space-x-4 pt-6">
                 <button type="submit"
                     class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center">
@@ -90,7 +84,6 @@
 
 @push('scripts')
     <script>
-        // Preview gambar
         function previewImage(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -102,7 +95,6 @@
             }
         }
 
-        // Drag and drop functionality
         const uploadArea = document.querySelector('.upload-area');
         uploadArea.addEventListener('dragover', function(e) {
             e.preventDefault();

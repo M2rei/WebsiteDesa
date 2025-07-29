@@ -1,14 +1,13 @@
 @extends('layout.sidebar')
 
-@section('title', 'Tambah Berita - Sistem Informasi Desa')
-@section('page-title', 'Tambah Berita Baru')
+@section('title', 'Tambah Informasi - Sistem Informasi Desa')
+@section('page-title', 'Tambah Informasi Baru')
 
 @section('content')
     <form action="{{ route('admin.informasi.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         <div class="space-y-6">
-            <!-- Judul Berita -->
             <div>
                 <label for="judul" class="block text-lg font-semibold text-gray-700 mb-2">Judul Berita</label>
                 <input type="text" id="judul" name="judul" value="{{ old('judul') }}"
@@ -19,7 +18,6 @@
                 @enderror
             </div>
 
-            <!-- deskripsi Berita -->
             <div>
                 <label for="deskripsi" class="block text-lg font-semibold text-gray-700 mb-2">Isi Berita</label>
                 <textarea id="deskripsi" name="deskripsi"
@@ -29,8 +27,6 @@
                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
-
-            <!-- Penulis -->
             <div>
                 <label for="penulis" class="block text-lg font-semibold text-gray-700 mb-2">Penulis</label>
                 <input type="text" id="penulis" name="penulis" value="{{ old('penulis') }}"
@@ -41,7 +37,6 @@
                 @enderror
             </div>
 
-            <!-- Kategori -->
             <div>
                 <label for="kategori" class="block text-lg font-semibold text-gray-700 mb-2">Kategori</label>
                 <select id="kategori" name="kategori"
@@ -59,7 +54,6 @@
                 @enderror
             </div>
 
-            <!-- Upload Lampiran -->
             <div>
                 <label class="block text-lg font-semibold text-gray-700 mb-2">Lampiran Informasi</label>
                 <div class="upload-area border-2 border-dashed border-blue-400 rounded-lg p-12 text-center bg-blue-50 hover:bg-blue-100 cursor-pointer"
@@ -77,21 +71,15 @@
                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                 @enderror
 
-                <!-- Preview Lampiran -->
                 <div id="preview-container" class="text-center mt-6 hidden">
-                    <!-- Untuk gambar -->
                     <img id="preview-image" class="mx-auto rounded-lg border border-gray-200 shadow-sm"
                         style="max-height: 300px; display: none;">
-
-                    <!-- Untuk PDF -->
                     <embed id="preview-pdf" type="application/pdf" class="mx-auto border border-gray-200 shadow-sm"
                         width="100%" height="400px" style="display: none; max-width: 600px;" />
 
                     <p class="text-gray-500 text-sm mt-2">Preview Lampiran</p>
                 </div>
             </div>
-
-            <!-- Tombol Aksi -->
             <div class="flex space-x-4 pt-6">
                 <button type="submit"
                     class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center">

@@ -14,10 +14,9 @@ class PeternakController extends Controller
     {
         $query = Peternak::with('ternaks');
 
-        if ($request->filled('tanggal_awal') && $request->filled('tanggal_akhir')) {
-            $start = Carbon::parse($request->tanggal_awal);
-            $end = Carbon::parse($request->tanggal_akhir);
-            $query->whereBetween('created_at', [$start, $end]);
+        if ($request->filled('periode') && $request->filled('tahun')) {
+            $query->where('periode', $request->periode)
+                ->where('tahun', $request->tahun);
         }
 
         if ($request->filled('wilayah')) {
@@ -25,13 +24,39 @@ class PeternakController extends Controller
         }
 
         $limit = $request->input('limit', 10);
-        $peternaks = $query->latest()->paginate($limit)->withQueryString();
+        $peternaksPaginated = $query->latest()->paginate($limit)->withQueryString();
 
-        return view('Admin.DataTernak.index', compact('peternaks', 'limit'));
+        $groupedPeternaks = collect($peternaksPaginated->items())
+            ->groupBy(function ($item) {
+                return $item->nama . '|' . $item->alamat . '|' . $item->periode . '|' . $item->tahun;
+            })->map(function ($group) {
+                $first = $group->first();
+                $allTernaks = $group->flatMap->ternaks;
+
+                return (object)[
+                    'nama' => $first->nama,
+                    'alamat' => $first->alamat,
+                    'periode' => $first->periode,
+                    'tahun' => $first->tahun,
+                    'ternaks' => $allTernaks,
+                ];
+            });
+
+        $periodeList = Peternak::select('periode')->distinct()->pluck('periode');
+        $daftarWilayah = Peternak::select('alamat')->distinct()->pluck('alamat');
+        $tahunList = Peternak::select('tahun')->distinct()->orderByDesc('tahun')->pluck('tahun');
+
+        return view('Admin.DataTernak.index', [
+            'groupedPeternaks' => $groupedPeternaks,
+            'peternaks' => $peternaksPaginated,
+            'limit' => $limit,
+            'periodeList' => $periodeList,
+            'daftarWilayah' => $daftarWilayah,
+            'tahunList' => $tahunList,
+        ]);
     }
     public function export(Request $request)
     {
-        // Kirim seluruh request filter ke class export
         return Excel::download(new PeternakExport($request), 'data_peternak.xlsx');
     }
 
@@ -45,8 +70,8 @@ class PeternakController extends Controller
         $request->validate([
             'nama' => 'required|string',
             'alamat' => 'required|string',
-            'tanggal_mulai' => 'required|string',
-            'tanggal_selesai' => 'required|string',
+            'periode' => 'required|string',
+            'tahun' => 'required|string',
             'ternaks' => 'required|array',
             'ternaks.*.jenis_ternak' => 'required|string',
             'ternaks.*.jumlah' => 'nullable|integer|min:0',
@@ -58,8 +83,8 @@ class PeternakController extends Controller
         $peternak = Peternak::create([
             'nama' => $request->nama,
             'alamat' => $request->alamat,
-            'tanggal_mulai' => $request->tanggal_mulai,
-            'tanggal_selesai' => $request->tanggal_selesai,
+            'periode' => $request->periode,
+            'tahun' => $request->tahun,
         ]);
 
         foreach ($request->ternaks as $data) {
@@ -68,7 +93,7 @@ class PeternakController extends Controller
             $total_jumlah = $jumlah_jantan + $jumlah_betina;
 
             if ($jumlah_jantan > 0) {
-                $peternak->ternakPeternaks()->create([
+                $peternak->ternaks()->create([
                     'jenis_ternak' => $data['jenis_ternak'],
                     'jenis_kelamin' => 'Jantan',
                     'jumlah' => $jumlah_jantan,
@@ -80,7 +105,7 @@ class PeternakController extends Controller
             }
 
             if ($jumlah_betina > 0) {
-                $peternak->ternakPeternaks()->create([
+                $peternak->ternaks()->create([
                     'jenis_ternak' => $data['jenis_ternak'],
                     'jenis_kelamin' => 'Betina',
                     'jumlah' => $jumlah_betina,

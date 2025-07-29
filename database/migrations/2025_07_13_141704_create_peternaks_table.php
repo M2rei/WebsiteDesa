@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('nama');
             $table->string('alamat');
-            $table->date('tanggal_mulai');
-            $table->date('tanggal_selesai');
+            $table->enum('periode', ['Januari - Juni', 'Juli - Desember']);
+            $table->year('tahun');
             $table->timestamps();
         });
     }

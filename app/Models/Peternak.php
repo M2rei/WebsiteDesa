@@ -9,7 +9,7 @@ class Peternak extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nama', 'alamat', 'tanggal_mulai', 'tanggal_selesai'];
+    protected $fillable = ['nama', 'alamat', 'periode', 'tahun'];
 
     public function ternaks()
     {

@@ -1,7 +1,7 @@
 @extends('layout.sidebar')
 
-@section('title', 'Detail Berita')
-@section('page-title', 'Detail Berita')
+@section('title', 'Detail Potensi Desa')
+@section('page-title', 'Detail  Potensi Desa')
 
 @section('content')
         <h2 class="text-2xl font-bold mb-4 text-center">{{ $potensidesa->nama_potensi }}</h2>

@@ -5,14 +5,12 @@
 
 @section('content')
     <div class="space-y-6">
-        {{-- Notifikasi Sukses --}}
         @if (session('success'))
             <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4">
                 {{ session('success') }}
             </div>
         @endif
 
-        {{-- Informasi Surat --}}
         <div class="bg-white p-6 rounded-lg shadow">
             <h2 class="text-xl font-semibold mb-4">Informasi Surat</h2>
 
@@ -34,7 +32,6 @@
             </div>
         </div>
 
-        {{-- Lampiran Gambar --}}
         @if ($suratdesa->dataPendukung->count())
             <div class="bg-white p-6 rounded-lg shadow">
                 <h2 class="text-xl font-semibold mb-4">Lampiran Gambar</h2>
@@ -47,9 +44,7 @@
             </div>
         @endif
 
-        {{-- Aksi --}}
         <div class="flex flex-wrap gap-3 mt-4">
-            <!-- Tombol Ubah Status -->
             @if ($suratdesa->status === 'diproses')
                 <form action="{{ route('admin.surat-desa.update-status', $suratdesa->id) }}" method="POST"
                     onsubmit="return confirm('Apakah Anda yakin ingin mengubah status menjadi selesai?')">

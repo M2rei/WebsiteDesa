@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\DeleteSuratDesa;
 use App\Models\DataPendukung;
 use App\Models\Desa;
 use App\Models\SuratDesa;
@@ -44,12 +45,12 @@ class SuratDesaController extends Controller
             'jenis_kelamin' => 'required|string',
             'agama' => 'required|string',
             'pekerjaan' => 'required|string',
+            'no_telepon' => 'required|string',
             'alamat' => 'required|string',
             'catatan_pemohon' => 'nullable|string',
             'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        // Simpan data surat
         $surat = SuratDesa::create([
             'jenis_surat' => $request->jenis_surat,
             'nama' => $validated['nama'],
@@ -58,12 +59,12 @@ class SuratDesaController extends Controller
             'jenis_kelamin' => $validated['jenis_kelamin'],
             'agama' => $validated['agama'],
             'pekerjaan' => $validated['pekerjaan'],
+            'no_telepon' => $validated['no_telepon'],
             'alamat' => $validated['alamat'],
             'catatan_pemohon' => $validated['catatan_pemohon'] ?? null,
             'status' => 'diproses',
         ]);
 
-        // Simpan gambar-gambar (jika ada)
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 $path = $image->store('data_pendukung');
@@ -108,10 +109,11 @@ class SuratDesaController extends Controller
         $suratdesa = SuratDesa::findOrFail($id);
 
         if ($suratdesa->status === 'diproses') {
-            $suratdesa->update([
-                'status' => 'selesai',
-            ]);
-        }
+        $suratdesa->update(['status' => 'selesai']);
+
+        DeleteSuratDesa::dispatch($id);
+        // DeleteSuratDesa::dispatch($id)->delay(now()->addMinutes(3));
+    }
 
         return redirect()->route('admin.surat-desa.show', $id)->with('success', 'Status berhasil diperbarui menjadi selesai.');
     }

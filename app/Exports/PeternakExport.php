@@ -19,23 +19,36 @@ class PeternakExport implements FromView
 
     public function view(): View
     {
-        $query = Peternak::with('ternaks');
+        $query = Peternak::query();
 
-
-        if ($this->request->filled('tanggal_awal') && $this->request->filled('tanggal_akhir')) {
-            $start = Carbon::parse(str_replace('T', ' ', $this->request->tanggal_awal));
-            $end = Carbon::parse(str_replace('T', ' ', $this->request->tanggal_akhir));
-            $query->whereBetween('created_at', [$start, $end]);
+        if ($this->request->filled('periode') && $this->request->filled('tahun')) {
+            $query->where('periode', $this->request->periode)
+                ->where('tahun', $this->request->tahun);
         }
 
         if ($this->request->filled('wilayah')) {
             $query->where('alamat', 'like', '%' . $this->request->wilayah . '%');
         }
 
-        $peternaks = $query->latest()->get();
+        $groupedPeternaks = collect($query->get())
+            ->groupBy(function ($item) {
+                return $item->nama . '|' . $item->alamat . '|' . $item->periode . '|' . $item->tahun;
+            })
+            ->map(function ($group) {
+                $first = $group->first();
+                $allTernaks = $group->flatMap->ternaks;
 
-        Log::info('Data peternak export', ['nama' => $peternaks->pluck('nama')->toArray()]);
+                return (object)[
+                    'nama' => $first->nama,
+                    'alamat' => $first->alamat,
+                    'periode' => $first->periode,
+                    'tahun' => $first->tahun,
+                    'ternaks' => $allTernaks,
+                ];
+            });
 
-        return view('Peternak.export_excel', compact('peternaks'));
+        return view('Admin.DataTernak.export', [
+            'groupedPeternaks' => $groupedPeternaks,
+        ]);
     }
 }

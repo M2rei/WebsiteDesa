@@ -1,7 +1,7 @@
 @extends('layout.sidebar')
 
-@section('title', 'Edit Berita')
-@section('page-title', 'Edit Berita')
+@section('title', 'Edit  Potensi Desa')
+@section('page-title', 'Edit  Potensi Desa')
 
 @section('content')
     <form action="{{ route('admin.potensi-desa.update', $potensidesa->id) }}" method="POST" enctype="multipart/form-data">
