@@ -18,7 +18,7 @@ class PublicViewController extends Controller
     }
     public function indexProfileDesa()
     {
-        return view('user.profiledesa');
+        return view('User.profiledesa');
     }
     public function indexInformasi(Request $request)
     {
@@ -41,7 +41,7 @@ class PublicViewController extends Controller
 
         $informasiTerbaru = Informasi::with('lampiran')->latest()->take(6)->get();
 
-        return view('user.informasi', compact(
+        return view('User.informasi', compact(
             'informasi',
             'informasiTerbaru',
             'kategoriFilter',
@@ -73,7 +73,7 @@ class PublicViewController extends Controller
 
         $potensi = $query->latest()->paginate(6)->appends($request->query());
 
-        return view('user.potensidesa', compact('potensi', 'semuaKategori', 'kategoriFilter', 'search'));
+        return view('User.potensidesa', compact('potensi', 'semuaKategori', 'kategoriFilter', 'search'));
     }
     public function show_potensidesa($id)
     {
@@ -84,6 +84,6 @@ class PublicViewController extends Controller
     {
         $strukturOrganisasi = StrukturOrganisasi::first();
         $anggotaStruktur = AnggotaStruktur::all();
-        return view('user.organisasi', compact('strukturOrganisasi', 'anggotaStruktur'));
+        return view('User.organisasi', compact('strukturOrganisasi', 'anggotaStruktur'));
     }
 }

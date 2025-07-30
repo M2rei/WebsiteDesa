@@ -63,7 +63,7 @@
                     </div>
                     <p class="text-gray-700 font-medium mb-2">Unggah Lampiran Informasi</p>
                     <p class="text-gray-500 text-sm">Klik untuk memilih file atau drag & drop</p>
-                    <p class="text-gray-400 text-xs mt-2">Format: JPEG, PNG, JPG, Pdf (Maks. 2MB)</p>
+                    <p class="text-gray-400 text-xs mt-2">Format: JPEG, PNG, JPG, Pdf (Maks. 5MB)</p>
                     <input type="file" id="lampiran-input" name="lampiran" accept="image/*,application/pdf"
                         class="hidden" onchange="previewImage(this)">
                 </div>

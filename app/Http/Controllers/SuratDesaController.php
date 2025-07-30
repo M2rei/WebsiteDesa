@@ -97,7 +97,7 @@ class SuratDesaController extends Controller
         $path = storage_path('app/private/data_pendukung/' . $filename);
 
         $isAuthorized = DataPendukung::where('image', 'data_pendukung/' . $filename)->exists();
-        if (!file_exists($path)|| !$isAuthorized) {
+        if (!file_exists($path) || !$isAuthorized) {
             abort(404);
         }
 
@@ -109,11 +109,11 @@ class SuratDesaController extends Controller
         $suratdesa = SuratDesa::findOrFail($id);
 
         if ($suratdesa->status === 'diproses') {
-        $suratdesa->update(['status' => 'selesai']);
+            $suratdesa->update(['status' => 'selesai']);
 
-        DeleteSuratDesa::dispatch($id);
-        // DeleteSuratDesa::dispatch($id)->delay(now()->addMinutes(3));
-    }
+            DeleteSuratDesa::dispatch($id)->delay(now()->addMinutes(5));
+            DeleteSuratDesa::dispatch($id);
+        }
 
         return redirect()->route('admin.surat-desa.show', $id)->with('success', 'Status berhasil diperbarui menjadi selesai.');
     }

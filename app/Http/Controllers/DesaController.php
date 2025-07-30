@@ -15,7 +15,7 @@ class DesaController extends Controller
     public function index()
     {
         $profiledesa = Desa::first();
-        return view('admin.profiledesa', compact('profiledesa'));
+        return view('Admin.profiledesa', compact('profiledesa'));
     }
 
     /**

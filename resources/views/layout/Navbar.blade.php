@@ -109,14 +109,16 @@
             </div>
 
             <!-- Mobile Menu -->
-            <div id="mobile-menu" class="md:hidden hidden pb-4">
-                <div class="space-y-2">
+            <div id="mobile-menu"
+                class="md:hidden hidden pb-4 bg-primary-800 text-white absolute top-full left-0 w-full shadow-lg z-50">
+                <div class="space-y-2 p-4">
                     <a href="{{ route('dashboard') }}" class="block py-2 hover:text-blue-200">Home</a>
                     <a href="{{ route('user.profile') }}" class="block py-2 hover:text-blue-200">Profile Desa</a>
-                    <a href="#" class="block py-2 hover:text-blue-200">Struktur Organisasi</a>
-                    <a href="#" class="block py-2 hover:text-blue-200">Informasi</a>
-                    <a href="" class="block py-2 hover:text-blue-200">Potensi Desa</a>
-                    <a href="" class="block py-2 hover:text-blue-200">Surat Desa</a>
+                    <a href="{{ route('user.organisasi') }}" class="block py-2 hover:text-blue-200">Struktur
+                        Organisasi</a>
+                    <a href="{{ route('user.informasi') }}" class="block py-2 hover:text-blue-200">Informasi</a>
+                    <a href="{{ route('user.potensidesa') }}" class="block py-2 hover:text-blue-200">Potensi Desa</a>
+                    <a href="{{ route('user.surat.create') }}" class="block py-2 hover:text-blue-200">Surat Desa</a>
                 </div>
             </div>
         </div>
@@ -202,11 +204,6 @@
     </footer>
 
     <script>
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
-        }
-
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
             menu.classList.toggle('hidden');
