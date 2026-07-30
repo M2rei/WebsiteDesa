@@ -1,27 +1,20 @@
 @extends('layout.Navbar')
 
 @section('title', 'Profile Desa - Desa Ngrejo Kabupaten Blitar Jawa Timur')
+@section('meta_description', 'Profil, sejarah, visi, dan misi Desa Ngrejo, Kecamatan Bakung, Kabupaten Blitar, Jawa Timur.')
 
 @section('content')
     <!-- Hero Section -->
-    <section class="relative bg-primary-800 text-white py-20 overflow-hidden">
-        <div class="absolute inset-0 z-0 bg-cover bg-center opacity-50"
-            style="background-image: url('{{ asset('image/background/1.JPG') }}')">
-        </div>
-
-        <div class="relative z-10 container mx-auto px-4">
-            <div class="max-w-4xl mx-auto text-center mt-6">
-                <h1 class="text-5xl font-bold mb-6">Profil Desa Ngrejo</h1>
-                <p class="text-xl text-blue-200">Mengenal lebih dekat tentang Desa Ngrejo, Kabupaten Blitar, Jawa Timur</p>
-            </div>
-        </div>
-    </section>
+    <x-hero-banner title="Profil Desa Ngrejo"
+        subtitle="Mengenal lebih dekat tentang Desa Ngrejo, Kabupaten Blitar, Jawa Timur"
+        image="image/background/2.JPG" />
 
     <!-- Logo & Header Section -->
     <section class="py-16 bg-white">
         <div class="container mx-auto px-4">
             <div class="max-w-4xl mx-auto text-center">
-                <img src="{{ asset('storage/' . $desa->logo_url) }}" alt="Logo Desa" class="mx-auto max-h-40 mb-8 ">
+                <img src="{{ \App\Helpers\ImageHelper::url($desa->logo_url) }}" alt="Logo Desa" width="200"
+                    height="200" class="mx-auto max-h-40 mb-8">
                 <h2 class="text-4xl font-bold text-gray-800 mb-4">Desa Ngrejo</h2>
                 <p class="text-xl text-gray-600">Kabupaten Blitar, Jawa Timur</p>
                 <div class="w-24 h-1 bg-orange-500 mx-auto mt-6"></div>
@@ -139,7 +132,7 @@
     </section>
 
     <!-- Call to Action -->
-    <section class="py-20 bg-gradient-to-r from-orange-500 to-orange-600 text-white">
+    <section class="py-20 bg-gradient-to-r from-orange-700 to-orange-800 text-white">
         <div class="container mx-auto px-4">
             <div class="max-w-4xl mx-auto text-center">
                 <h2 class="text-4xl font-bold mb-6">Mari Bersama Membangun Desa</h2>
@@ -177,7 +170,7 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
+                    entry.target.style.transform = '';
                 }
             });
         }, observerOptions);
@@ -191,15 +184,6 @@
                 section.style.transition =
                     `opacity 0.8s ease ${index * 0.1}s, transform 0.8s ease ${index * 0.1}s`;
                 observer.observe(section);
-            });
-
-            // Add parallax effect to hero section
-            window.addEventListener('scroll', () => {
-                const scrolled = window.pageYOffset;
-                const hero = document.querySelector('section');
-                if (hero) {
-                    hero.style.transform = `translateY(${scrolled * 0.5}px)`;
-                }
             });
 
             // Add counter animation for statistics

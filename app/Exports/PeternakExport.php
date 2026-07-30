@@ -19,7 +19,7 @@ class PeternakExport implements FromView
 
     public function view(): View
     {
-        $query = Peternak::query();
+        $query = Peternak::with('ternaks');
 
         if ($this->request->filled('periode') && $this->request->filled('tahun')) {
             $query->where('periode', $this->request->periode)

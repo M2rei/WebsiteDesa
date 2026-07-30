@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\AnggotaStruktur;
-use App\Models\DokumenDesa;
 use App\Models\Informasi;
 use App\Models\PotensiDesa;
 use App\Models\StrukturOrganisasi;

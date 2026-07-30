@@ -19,7 +19,7 @@ public function redirectToGoogle()
     public function handleGoogleCallback()
     {
         $googleUser = Socialite::driver('google')->user();
-        if ($googleUser->email !== 'pemdesngrejo@gmail.com') {
+        if ($googleUser->email !== config('services.google.admin_email')) {
             return redirect('/')->with('error', 'Akun tidak diizinkan login.');
         }
 

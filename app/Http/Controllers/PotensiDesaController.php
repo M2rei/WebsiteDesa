@@ -15,12 +15,36 @@ class PotensiDesaController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 5);
+        $search = $request->input('search');
+        $sort = $request->input('sort', 'created_at');
+        $direction = $request->input('direction') === 'asc' ? 'asc' : 'desc';
+
+        if (! in_array($sort, ['kategori', 'nama_potensi', 'created_at'], true)) {
+            $sort = 'created_at';
+        }
+
+        $query = PotensiDesa::query();
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_potensi', 'like', "%{$search}%")
+                    ->orWhere('kategori', 'like', "%{$search}%")
+                    ->orWhere('deskripsi', 'like', "%{$search}%");
+            });
+        }
+
+        $query->orderBy($sort, $direction);
+
         $potensidesas = $perPage === 'all'
-            ? PotensiDesa::latest()->get()
-            : PotensiDesa::latest()->paginate($perPage);
+            ? $query->get()
+            : $query->paginate($perPage)->withQueryString();
+
         return view('Admin.PotensiDesa.potensidesa', [
             'potensidesas' => $potensidesas,
-            'selectedPerPage' => $perPage
+            'selectedPerPage' => $perPage,
+            'search' => $search,
+            'sort' => $sort,
+            'direction' => $direction,
         ]);
     }
 
@@ -30,7 +54,8 @@ class PotensiDesaController extends Controller
     public function create()
     {
         $potensidesa = Desa::first();
-        return view('Admin.PotensiDesa.form', compact('potensidesa'));
+        $kategoriOptions = PotensiDesa::KATEGORI_OPTIONS;
+        return view('Admin.PotensiDesa.form', compact('potensidesa', 'kategoriOptions'));
     }
 
     /**
@@ -69,7 +94,8 @@ class PotensiDesaController extends Controller
     public function edit($id)
     {
         $potensidesa = PotensiDesa::findOrFail($id);
-        return view('Admin.PotensiDesa.form-edit', compact('potensidesa'));
+        $kategoriOptions = PotensiDesa::KATEGORI_OPTIONS;
+        return view('Admin.PotensiDesa.form-edit', compact('potensidesa', 'kategoriOptions'));
     }
 
     /**

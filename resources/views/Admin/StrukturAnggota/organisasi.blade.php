@@ -29,7 +29,7 @@
                 </div>
 
                 <a href="{{ route('admin.struktur-organisasi.create') }}"
-                    class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center">
+                    class="bg-orange-700 hover:bg-orange-800 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center">
                     <i class="fas fa-plus mr-2"></i>
                     Tambah Struktur Anggota Desa
                 </a>
@@ -69,16 +69,12 @@
                     <tbody class="bg-white divide-y divide-gray-200">
                         @forelse($anggotaStrukturs as $index => $anggotaStruktur)
                             <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $index + 1 }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ (method_exists($anggotaStrukturs, 'firstItem') ? $anggotaStrukturs->firstItem() : 1) + $index }}
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    @if ($anggotaStruktur->foto)
-                                        <img src="{{ asset('storage/' . $anggotaStruktur->foto) }}"
-                                            alt="Gambar Struktur Perangkat Desa" class="w-16 h-12 object-cover rounded">
-                                    @else
-                                        <div class="w-16 h-12 bg-gray-200 rounded flex items-center justify-center">
-                                            <i class="fas fa-image text-gray-400"></i>
-                                        </div>
-                                    @endif
+                                    <img src="{{ \App\Helpers\ImageHelper::url($anggotaStruktur->foto) }}"
+                                        alt="Gambar Struktur Perangkat Desa" class="w-16 h-12 object-cover rounded">
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                     <span
@@ -95,15 +91,15 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div class="flex items-center space-x-2">
                                         <a href="{{ route('admin.struktur-organisasi.show', $anggotaStruktur->id) }}"
-                                            class="text-gray-600 hover:text-gray-900 p-1" title="Lihat">
+                                            class="text-gray-600 hover:text-gray-900 p-1" title="Lihat" aria-label="Lihat">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         <a href="{{ route('admin.struktur-organisasi.edit', $anggotaStruktur->id) }}"
-                                            class="text-blue-600 hover:text-blue-900 p-1" title="Edit">
+                                            class="text-blue-600 hover:text-blue-900 p-1" title="Edit" aria-label="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <button onclick="showDeleteModal({{ $anggotaStruktur->id }})"
-                                            class="text-red-600 hover:text-red-900 p-1" title="Hapus">
+                                            class="text-red-600 hover:text-red-900 p-1" title="Hapus" aria-label="Hapus">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
@@ -174,33 +170,8 @@
         @endif
     </div>
 
-    <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 items-center justify-center">
-        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <div class="flex items-center mb-4">
-                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
-                    <i class="fas fa-exclamation-triangle text-red-600"></i>
-                </div>
-                <div class="ml-4">
-                    <h3 class="text-lg font-medium text-gray-900">Konfirmasi Hapus</h3>
-                    <p class="text-sm text-gray-500">Apakah Anda yakin ingin menghapus informasi ini?</p>
-                </div>
-            </div>
-            <div class="flex justify-end space-x-3">
-                <button onclick="closeDeleteModal()"
-                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                    Batal
-                </button>
-                <form id="deleteForm" method="POST" action="">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit"
-                        class="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700">
-                        Hapus
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
+    <x-confirm-modal id="deleteModal" formId="deleteForm" title="Konfirmasi Hapus"
+        description="Apakah Anda yakin ingin menghapus anggota struktur ini?" confirmLabel="Hapus" color="red" />
     <div class="mt-6 bg-white shadow-md rounded-lg p-6">
         <h2 class="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2 flex items-center gap-2">
             <i class="fas fa-sitemap text-blue-500"></i>
@@ -229,7 +200,7 @@
                 @enderror
                 @if (!empty($strukturOrganisasi->image))
                     <div class="text-center mt-6">
-                        <img src="{{ asset('storage/' . $strukturOrganisasi->image) }}" alt="Struktur Organisasi"
+                        <img src="{{ \App\Helpers\ImageHelper::url($strukturOrganisasi->image) }}" alt="Struktur Organisasi"
                             class="mx-auto rounded-lg border border-gray-200 shadow-sm" style="max-height: 300px;">
                         <p class="text-gray-500 text-sm mt-2">Gambar saat ini</p>
                     </div>
@@ -243,7 +214,7 @@
             </div>
             <div class="flex space-x-4 pt-6">
                 <button type="submit"
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center">
+                    class="bg-orange-700 hover:bg-orange-800 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center">
                     <i class="fas fa-save mr-2"></i> Simpan
                 </button>
                 <a href="{{ route('admin.struktur-organisasi.index') }}"
@@ -269,11 +240,6 @@
             deleteModal.classList.add('flex');
         }
 
-        function closeDeleteModal() {
-            const deleteModal = document.getElementById('deleteModal');
-            deleteModal.classList.add('hidden');
-            deleteModal.classList.remove('flex');
-        }
         document.querySelector('input[placeholder="Cari"]').addEventListener('input', function(e) {
             const searchTerm = e.target.value.toLowerCase();
             const rows = document.querySelectorAll('tbody tr');

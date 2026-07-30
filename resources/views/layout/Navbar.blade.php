@@ -5,40 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Desa Ngrejo - Kabupaten Blitar Jawa Timur')</title>
-    <link rel="icon" href="{{ asset('storage/' . $desa->logo_url) }}" type="image/png">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="//unpkg.com/alpinejs" defer></script>
+    <meta name="description"
+        content="@yield('meta_description', 'Portal resmi Desa Ngrejo, Kecamatan Bakung, Kabupaten Blitar, Jawa Timur. Informasi, profil desa, potensi desa, dan layanan surat menyurat online.')">
+    <link rel="icon" href="{{ \App\Helpers\ImageHelper::url($desa->logo_url) }}" type="image/png">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            50: '#eff6ff',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                            800: '#1e40af',
-                            900: '#1e3a8a'
-                        },
-                        orange: {
-                            500: '#f97316',
-                            600: '#ea580c'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
     <style>
-        .hero-bg {
-            background: linear-gradient(rgba(30, 58, 138, 0.8), rgba(30, 58, 138, 0.8)), url('/images/hero-bg.png');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
-
         .navbar-shadow {
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
@@ -59,15 +31,15 @@
     @stack('styles')
 </head>
 
-<body class="bg-gray-50">
+<body class="bg-gray-50 min-h-screen flex flex-col">
     <nav id="navbar"
         class="fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out bg-transparent text-white">
         <div class="container mx-auto px-4">
             <div class="flex items-center justify-between py-4">
                 <div class="flex items-center space-x-3">
                     <div class="inline-block">
-                        <img src="{{ asset('storage/' . $desa->logo_url) }}" alt="Logo Desa"
-                            class="h-auto max-h-12 w-auto object-contain" />
+                        <img src="{{ \App\Helpers\ImageHelper::url($desa->logo_url) }}" alt="Logo Desa" width="200"
+                            height="200" class="h-auto max-h-12 w-auto object-contain" />
                     </div>
                     <div>
                         <h1 class="font-bold text-lg">Desa Ngrejo</h1>
@@ -78,33 +50,35 @@
                 <!-- Navigation Menu -->
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="{{ route('dashboard') }}"
-                        class="transition-colors px-3 py-2 rounded {{ request()->routeIs('dashboard') ? 'bg-blue-700 text-white' : 'hover:text-blue-200' }}">
+                        class="transition-colors px-3 py-2 border-b-4 {{ request()->routeIs('dashboard') ? 'border-white text-white' : 'border-transparent hover:text-blue-200' }}">
                         Home
                     </a>
                     <a href="{{ route('user.profile') }}"
-                        class="transition-colors px-3 py-2 rounded {{ request()->routeIs('user.profile') ? 'bg-blue-700 text-white' : 'hover:text-blue-200' }}">
+                        class="transition-colors px-3 py-2 border-b-4 {{ request()->routeIs('user.profile') ? 'border-white text-white' : 'border-transparent hover:text-blue-200' }}">
                         Profile Desa
                     </a>
                     <a href="{{ route('user.organisasi') }}"
-                        class="transition-colors px-3 py-2 rounded {{ request()->routeIs('user.organisasi') ? 'bg-blue-700 text-white' : 'hover:text-blue-200' }}">
+                        class="transition-colors px-3 py-2 border-b-4 {{ request()->routeIs('user.organisasi') ? 'border-white text-white' : 'border-transparent hover:text-blue-200' }}">
                         Struktur Organisasi
                     </a>
                     <a href="{{ route('user.informasi') }}"
-                        class="transition-colors px-3 py-2 rounded {{ request()->routeIs('user.informasi') ? 'bg-blue-700 text-white' : 'hover:text-blue-200' }}">
+                        class="transition-colors px-3 py-2 border-b-4 {{ request()->routeIs('user.informasi') ? 'border-white text-white' : 'border-transparent hover:text-blue-200' }}">
                         Informasi
                     </a>
                     <a href="{{ route('user.potensidesa') }}"
-                        class="transition-colors px-3 py-2 rounded {{ request()->routeIs('user.potensidesa') ? 'bg-blue-700 text-white' : 'hover:text-blue-200' }}">
+                        class="transition-colors px-3 py-2 border-b-4 {{ request()->routeIs('user.potensidesa') ? 'border-white text-white' : 'border-transparent hover:text-blue-200' }}">
                         Potensi Desa
                     </a>
                     <a href="{{ route('user.surat.create') }}"
-                        class="transition-colors px-3 py-2 rounded {{ request()->routeIs('user.surat.create') ? 'bg-blue-700 text-white' : 'hover:text-blue-200' }}">
+                        class="transition-colors px-3 py-2 border-b-4 {{ request()->routeIs('user.surat.create') ? 'border-white text-white' : 'border-transparent hover:text-blue-200' }}">
                         Surat Desa
                     </a>
                 </div>
                 <!-- Mobile Menu Button -->
-                <button class="md:hidden text-white" onclick="toggleMobileMenu()">
-                    <i class="fas fa-bars text-xl"></i>
+                <button type="button" class="md:hidden w-11 h-11 flex items-center justify-center text-white"
+                    onclick="toggleMobileMenu()" aria-label="Buka menu" aria-controls="mobile-menu"
+                    aria-expanded="false" id="mobile-menu-btn">
+                    <i class="fas fa-bars text-xl" id="mobile-menu-icon"></i>
                 </button>
             </div>
 
@@ -112,20 +86,35 @@
             <div id="mobile-menu"
                 class="md:hidden hidden pb-4 bg-primary-800 text-white absolute top-full left-0 w-full shadow-lg z-50">
                 <div class="space-y-2 p-4">
-                    <a href="{{ route('dashboard') }}" class="block py-2 hover:text-blue-200">Home</a>
-                    <a href="{{ route('user.profile') }}" class="block py-2 hover:text-blue-200">Profile Desa</a>
-                    <a href="{{ route('user.organisasi') }}" class="block py-2 hover:text-blue-200">Struktur
+                    <a href="{{ route('dashboard') }}"
+                        class="block py-2 border-b-4 {{ request()->routeIs('dashboard') ? 'border-white text-white' : 'border-transparent hover:text-blue-200' }}">Home</a>
+                    <a href="{{ route('user.profile') }}"
+                        class="block py-2 border-b-4 {{ request()->routeIs('user.profile') ? 'border-white text-white' : 'border-transparent hover:text-blue-200' }}">Profile
+                        Desa</a>
+                    <a href="{{ route('user.organisasi') }}"
+                        class="block py-2 border-b-4 {{ request()->routeIs('user.organisasi') ? 'border-white text-white' : 'border-transparent hover:text-blue-200' }}">Struktur
                         Organisasi</a>
-                    <a href="{{ route('user.informasi') }}" class="block py-2 hover:text-blue-200">Informasi</a>
-                    <a href="{{ route('user.potensidesa') }}" class="block py-2 hover:text-blue-200">Potensi Desa</a>
-                    <a href="{{ route('user.surat.create') }}" class="block py-2 hover:text-blue-200">Surat Desa</a>
+                    <a href="{{ route('user.informasi') }}"
+                        class="block py-2 border-b-4 {{ request()->routeIs('user.informasi') ? 'border-white text-white' : 'border-transparent hover:text-blue-200' }}">Informasi</a>
+                    <a href="{{ route('user.potensidesa') }}"
+                        class="block py-2 border-b-4 {{ request()->routeIs('user.potensidesa') ? 'border-white text-white' : 'border-transparent hover:text-blue-200' }}">Potensi
+                        Desa</a>
+                    <a href="{{ route('user.surat.create') }}"
+                        class="block py-2 border-b-4 {{ request()->routeIs('user.surat.create') ? 'border-white text-white' : 'border-transparent hover:text-blue-200' }}">Surat
+                        Desa</a>
                 </div>
             </div>
         </div>
+
+        <!-- Mobile Menu Backdrop -->
+        <div id="mobile-menu-backdrop" onclick="toggleMobileMenu()"
+            class="md:hidden hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300"></div>
     </nav>
 
     <!-- Main Content -->
-    @yield('content')
+    <main class="flex-1">
+        @yield('content')
+    </main>
 
     <!-- Footer -->
     <footer class="bg-primary-900 text-white py-12">
@@ -134,8 +123,8 @@
                 <div>
                     <div class="flex items-center space-x-3 mb-4">
                         <div class="inline-block">
-                            <img src="{{ asset('storage/' . $desa->logo_url) }}" alt="Logo Desa"
-                                class="h-auto max-h-20 w-auto object-contain">
+                            <img src="{{ \App\Helpers\ImageHelper::url($desa->logo_url) }}" alt="Logo Desa"
+                                width="200" height="200" class="h-auto max-h-20 w-auto object-contain">
                         </div>
                         <div>
                             <h3 class="font-bold text-lg">Desa Ngrejo</h3>
@@ -146,16 +135,19 @@
                     </p>
                     <div class="flex space-x-4">
                         <a href="https://www.facebook.com/profile.php?id=61578703221314"
+                            aria-label="Facebook Desa Ngrejo" target="_blank" rel="noopener"
                             class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-500 transition-colors">
-                            <i class="fab fa-facebook-f text-sm"></i>
+                            <i class="fab fa-facebook-f text-sm" aria-hidden="true"></i>
                         </a>
-                        <a href="http://www.youtube.com/@pemdesngrejo1287"
+                        <a href="http://www.youtube.com/@pemdesngrejo1287" aria-label="YouTube Desa Ngrejo"
+                            target="_blank" rel="noopener"
                             class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center hover:bg-red-500 transition-colors">
-                            <i class="fab fa-youtube text-sm text-white"></i>
+                            <i class="fab fa-youtube text-sm text-white" aria-hidden="true"></i>
                         </a>
                         <a href="https://www.instagram.com/pemdesngrejo?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+                            aria-label="Instagram Desa Ngrejo" target="_blank" rel="noopener"
                             class="w-8 h-8 bg-pink-600 rounded-full flex items-center justify-center hover:bg-pink-500 transition-colors">
-                            <i class="fab fa-instagram text-sm"></i>
+                            <i class="fab fa-instagram text-sm" aria-hidden="true"></i>
                         </a>
                     </div>
                 </div>
@@ -198,19 +190,17 @@
             </div>
 
             <div class="border-t border-blue-800 mt-8 pt-8 text-center text-blue-200">
-                <p>&copy; 2025 Desa Ngrejo. All rights reserved.</p>
+                <p>&copy; {{ date('Y') }} Pemerintah Desa Ngrejo. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
     <script>
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
-        }
-        window.addEventListener('scroll', function() {
+        let mobileMenuOpen = false;
+
+        function updateNavbarBackground() {
             const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
+            if (mobileMenuOpen || window.scrollY > 50) {
                 navbar.classList.remove('bg-transparent');
                 navbar.classList.add('bg-primary-800');
                 navbar.classList.add('text-white');
@@ -218,6 +208,31 @@
                 navbar.classList.remove('bg-primary-800');
                 navbar.classList.add('bg-transparent');
                 navbar.classList.add('text-white');
+            }
+        }
+
+        function toggleMobileMenu() {
+            mobileMenuOpen = !mobileMenuOpen;
+
+            const menu = document.getElementById('mobile-menu');
+            const backdrop = document.getElementById('mobile-menu-backdrop');
+            const icon = document.getElementById('mobile-menu-icon');
+            const btn = document.getElementById('mobile-menu-btn');
+
+            menu.classList.toggle('hidden', !mobileMenuOpen);
+            backdrop.classList.toggle('hidden', !mobileMenuOpen);
+            icon.classList.toggle('fa-bars', !mobileMenuOpen);
+            icon.classList.toggle('fa-times', mobileMenuOpen);
+            btn.setAttribute('aria-expanded', mobileMenuOpen ? 'true' : 'false');
+
+            updateNavbarBackground();
+        }
+
+        window.addEventListener('scroll', updateNavbarBackground);
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && mobileMenuOpen) {
+                toggleMobileMenu();
             }
         });
     </script>

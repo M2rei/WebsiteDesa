@@ -63,7 +63,7 @@
                     </div>
                     <p class="text-gray-700 font-medium mb-2">Unggah Lampiran Informasi</p>
                     <p class="text-gray-500 text-sm">Klik untuk memilih file atau drag & drop</p>
-                    <p class="text-gray-400 text-xs mt-2">Format: JPEG, PNG, JPG, Pdf (Maks. 5MB)</p>
+                    <p class="text-gray-500 text-xs mt-2">Format: JPEG, PNG, JPG, Pdf (Maks. 5MB)</p>
                     <input type="file" id="lampiran-input" name="lampiran" accept="image/*,application/pdf"
                         class="hidden" onchange="previewImage(this)">
                 </div>
@@ -82,7 +82,7 @@
             </div>
             <div class="flex space-x-4 pt-6">
                 <button type="submit"
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center">
+                    class="bg-orange-700 hover:bg-orange-800 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center">
                     <i class="fas fa-save mr-2"></i>
                     Simpan Informasi
                 </button>

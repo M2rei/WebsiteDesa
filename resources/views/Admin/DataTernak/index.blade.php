@@ -38,7 +38,7 @@
                     <option value="50" {{ request('limit') == 50 ? 'selected' : '' }}>50</option>
                 </select>
 
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition">
+                <button type="submit" class="bg-orange-700 hover:bg-orange-800 text-white px-4 py-2 rounded-md transition">
                     Filter
                 </button>
 
@@ -49,80 +49,83 @@
             </form>
 
             <a href="{{ route('admin.peternak.create') }}"
-                class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md font-medium flex items-center transition">
+                class="bg-orange-700 hover:bg-orange-800 text-white px-4 py-2 rounded-md font-medium flex items-center transition">
                 <i class="fas fa-plus mr-2"></i>
                 Tambah Data Peternak
             </a>
         </div>
 
-        <table class="w-full table-auto border text-sm">
-            <thead class="bg-gray-100">
-                <tr>
-                    <th class="px-2 py-1 border">No</th>
-                    <th class="border px-2 py-1">Nama</th>
-                    <th class="border px-2 py-1">Alamat</th>
-                    <th class="px-2 py-1 border">Periode</th>
-                    <th class="px-2 py-1 border">Tahun</th>
-                    <th class="px-2 py-1 border">Jenis Ternak</th>
-                    <th class="px-2 py-1 border">Jumlah</th>
-                    <th class="px-2 py-1 border">Total Ternak</th>
-                    <th class="border px-2 py-1">Riwayat Penyakit</th>
-                    <th class="border px-2 py-1">Keterangan</th>
-                </tr>
-            </thead>
-            @php
-                $shownTotalJenis = [];
-            @endphp
-            <tbody>
-                @forelse ($groupedPeternaks as $index => $peternak)
-                    @php
-                        $groupedTernak = $peternak->ternaks->groupBy('jenis_ternak');
-                        $totalTernak = $peternak->ternaks->count();
-                    @endphp
-                    @for ($i = 0; $i < $totalTernak; $i++)
-                        <tr>
-                            @if ($i === 0)
-                                <td class="border px-2 py-1" rowspan="{{ $totalTernak }}">{{ $loop->iteration }}</td>
-                                <td class="border px-2 py-1" rowspan="{{ $totalTernak }}">{{ $peternak->nama }}</td>
-                                <td class="border px-2 py-1" rowspan="{{ $totalTernak }}">{{ $peternak->alamat }}</td>
-                                <td class="border px-2 py-1" rowspan="{{ $totalTernak }}">{{ $peternak->periode }}</td>
-                                <td class="border px-2 py-1" rowspan="{{ $totalTernak }}">{{ $peternak->tahun }}</td>
-                            @endif
-
-                            @php
-                                $ternak = $peternak->ternaks[$i];
-                            @endphp
-                            <td class="border px-2 py-1">• {{ $ternak->jenis_ternak }} ({{ $ternak->jenis_kelamin }})</td>
-                            <td class="border px-2 py-1">• {{ $ternak->jumlah }}</td>
-                            <td class="border px-2 py-1">
-                                @php
-                                    $key = $ternak->peternak_id . '_' . $ternak->jenis_ternak;
-                                @endphp
-                                @if (!in_array($key, $shownTotalJenis))
-                                    • {{ $ternak->total_jumlah }}
-                                    @php
-                                        $shownTotalJenis[] = $key;
-                                    @endphp
-                                @endif
-                            </td>
-                            <td class="border px-2 py-1">• {{ $ternak->riwayat_penyakit ?? '-' }}</td>
-                            <td class="border px-2 py-1">• {{ $ternak->keterangan ?? '-' }}</td>
-                        </tr>
-                    @endfor
-                @empty
+        <div class="overflow-x-auto">
+            <table class="min-w-[900px] w-full table-auto border text-sm">
+                <thead class="bg-gray-100">
                     <tr>
-                        <td colspan="9" class="text-center py-4">Tidak ada data ditemukan.</td>
+                        <th class="px-2 py-1 border">No</th>
+                        <th class="border px-2 py-1">Nama</th>
+                        <th class="border px-2 py-1">Alamat</th>
+                        <th class="px-2 py-1 border">Periode</th>
+                        <th class="px-2 py-1 border">Tahun</th>
+                        <th class="px-2 py-1 border">Jenis Ternak</th>
+                        <th class="px-2 py-1 border">Jumlah</th>
+                        <th class="px-2 py-1 border">Total Ternak</th>
+                        <th class="border px-2 py-1">Riwayat Penyakit</th>
+                        <th class="border px-2 py-1">Keterangan</th>
                     </tr>
-                @endforelse
-            </tbody>
-        </table>
+                </thead>
+                @php
+                    $shownTotalJenis = [];
+                @endphp
+                <tbody>
+                    @forelse ($groupedPeternaks as $index => $peternak)
+                        @php
+                            $groupedTernak = $peternak->ternaks->groupBy('jenis_ternak');
+                            $totalTernak = $peternak->ternaks->count();
+                        @endphp
+                        @for ($i = 0; $i < $totalTernak; $i++)
+                            <tr>
+                                @if ($i === 0)
+                                    <td class="border px-2 py-1" rowspan="{{ $totalTernak }}">
+                                        {{ $peternaks->firstItem() + $loop->index }}</td>
+                                    <td class="border px-2 py-1" rowspan="{{ $totalTernak }}">{{ $peternak->nama }}</td>
+                                    <td class="border px-2 py-1" rowspan="{{ $totalTernak }}">{{ $peternak->alamat }}</td>
+                                    <td class="border px-2 py-1" rowspan="{{ $totalTernak }}">{{ $peternak->periode }}</td>
+                                    <td class="border px-2 py-1" rowspan="{{ $totalTernak }}">{{ $peternak->tahun }}</td>
+                                @endif
+
+                                @php
+                                    $ternak = $peternak->ternaks[$i];
+                                @endphp
+                                <td class="border px-2 py-1">• {{ $ternak->jenis_ternak }} ({{ $ternak->jenis_kelamin }})</td>
+                                <td class="border px-2 py-1">• {{ $ternak->jumlah }}</td>
+                                <td class="border px-2 py-1">
+                                    @php
+                                        $key = $ternak->peternak_id . '_' . $ternak->jenis_ternak;
+                                    @endphp
+                                    @if (!in_array($key, $shownTotalJenis))
+                                        • {{ $ternak->total_jumlah }}
+                                        @php
+                                            $shownTotalJenis[] = $key;
+                                        @endphp
+                                    @endif
+                                </td>
+                                <td class="border px-2 py-1">• {{ $ternak->riwayat_penyakit ?? '-' }}</td>
+                                <td class="border px-2 py-1">• {{ $ternak->keterangan ?? '-' }}</td>
+                            </tr>
+                        @endfor
+                    @empty
+                        <tr>
+                            <td colspan="10" class="text-center py-4">Tidak ada data ditemukan.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
 
         <div class="mt-4">
             {{ $peternaks->links() }}
         </div>
     </div>
 
-    <div id="exportModal" class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
+    <div id="exportModal" class="hidden fixed inset-0 bg-black/50 items-center justify-center z-50">
         <div class="bg-white rounded-lg shadow p-6 w-full max-w-md mx-auto">
             <h2 class="text-xl font-bold mb-4">Export Data Peternak</h2>
             <form action="{{ route('admin.peternak.export') }}" method="GET">
@@ -159,7 +162,7 @@
                     <button type="button" onclick="closeExportModal()"
                         class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Batal</button>
                     <button type="submit"
-                        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Export</button>
+                        class="bg-orange-700 text-white px-4 py-2 rounded hover:bg-orange-800">Export</button>
                 </div>
             </form>
 

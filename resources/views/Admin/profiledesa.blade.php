@@ -80,7 +80,7 @@
 
             @if (!empty($profiledesa->logo_url))
                 <div class="text-center mt-6">
-                    <img src="{{ asset('storage/' . $profiledesa->logo_url) }}" alt="Logo Desa"
+                    <img src="{{ \App\Helpers\ImageHelper::url($profiledesa->logo_url) }}" alt="Logo Desa"
                         class="mx-auto rounded-lg border border-gray-200 shadow-sm" style="max-height: 200px;">
                     <p class="text-gray-500 text-sm mt-2">Logo saat ini</p>
                 </div>
@@ -94,7 +94,7 @@
 
         <div class="flex space-x-4 pt-6">
             <button type="submit"
-                class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center">
+                class="bg-orange-700 hover:bg-orange-800 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center">
                 <i class="fas fa-save mr-2"></i>
                 Simpan
             </button>

@@ -17,11 +17,37 @@ class SuratDesaController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 5);
-        $suratdesas = $perPage === 'all'
-            ? SuratDesa::latest()->get()
-            : SuratDesa::latest()->paginate($perPage);
+        $search = $request->input('search');
+        $sort = $request->input('sort', 'created_at');
+        $direction = $request->input('direction') === 'asc' ? 'asc' : 'desc';
 
-        return view('Admin.SuratDesa.suratdesa', compact('suratdesas'));
+        if (! in_array($sort, ['jenis_surat', 'nama', 'status', 'created_at'], true)) {
+            $sort = 'created_at';
+        }
+
+        $query = SuratDesa::query();
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
+                    ->orWhere('jenis_surat', 'like', "%{$search}%")
+                    ->orWhere('alamat', 'like', "%{$search}%");
+            });
+        }
+
+        $query->orderBy($sort, $direction);
+
+        $suratdesas = $perPage === 'all'
+            ? $query->get()
+            : $query->paginate($perPage)->withQueryString();
+
+        return view('Admin.SuratDesa.suratdesa', [
+            'suratdesas' => $suratdesas,
+            'selectedPerPage' => $perPage,
+            'search' => $search,
+            'sort' => $sort,
+            'direction' => $direction,
+        ]);
     }
 
     /**
@@ -40,10 +66,10 @@ class SuratDesaController extends Controller
         $validated = $request->validate([
             'jenis_surat' => 'required|string|max:255',
             'nama' => 'required|string|max:255',
-            'nik' => 'required|string|max:255',
+            'nik' => 'nullable|string|max:255',
             'tempat_tgl_lahir' => 'required|string|max:255',
             'jenis_kelamin' => 'required|string',
-            'agama' => 'required|string',
+            'agama' => 'required|in:Islam,Kristen,Katolik,Hindu,Buddha,Khonghucu',
             'pekerjaan' => 'required|string',
             'no_telepon' => 'required|string',
             'alamat' => 'required|string',
@@ -52,16 +78,7 @@ class SuratDesaController extends Controller
         ]);
 
         $surat = SuratDesa::create([
-            'jenis_surat' => $request->jenis_surat,
-            'nama' => $validated['nama'],
-            'nik' => $validated['nik'],
-            'tempat_tgl_lahir' => $validated['tempat_tgl_lahir'],
-            'jenis_kelamin' => $validated['jenis_kelamin'],
-            'agama' => $validated['agama'],
-            'pekerjaan' => $validated['pekerjaan'],
-            'no_telepon' => $validated['no_telepon'],
-            'alamat' => $validated['alamat'],
-            'catatan_pemohon' => $validated['catatan_pemohon'] ?? null,
+            ...$validated,
             'status' => 'diproses',
         ]);
 
@@ -83,7 +100,7 @@ class SuratDesaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(int $id)
     {
         $suratdesa = SuratDesa::with('dataPendukung')->findOrFail($id);
         foreach ($suratdesa->dataPendukung as $lampiran) {
@@ -92,27 +109,29 @@ class SuratDesaController extends Controller
         return view('Admin.SuratDesa.show', compact('suratdesa'));
     }
 
-    public function showImage($filename)
+    public function showImage(string $filename)
     {
-        $path = storage_path('app/private/data_pendukung/' . $filename);
-
         $isAuthorized = DataPendukung::where('image', 'data_pendukung/' . $filename)->exists();
-        if (!file_exists($path) || !$isAuthorized) {
+        if (!$isAuthorized) {
             abort(404);
+        }
+
+        $path = storage_path('app/private/data_pendukung/' . $filename);
+        if (!file_exists($path)) {
+            return response()->file(public_path('images/placeholder.png'));
         }
 
         return response()->file($path);
     }
 
-    public function updateStatus($id)
+    public function updateStatus(int $id)
     {
         $suratdesa = SuratDesa::findOrFail($id);
 
         if ($suratdesa->status === 'diproses') {
             $suratdesa->update(['status' => 'selesai']);
 
-            DeleteSuratDesa::dispatch($id)->delay(now()->addMinutes(5));
-            DeleteSuratDesa::dispatch($id);
+            DeleteSuratDesa::dispatchSync($id);
         }
 
         return redirect()->route('admin.surat-desa.show', $id)->with('success', 'Status berhasil diperbarui menjadi selesai.');
@@ -137,7 +156,7 @@ class SuratDesaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(int $id)
     {
         $suratdesa = SuratDesa::with('dataPendukung')->findOrFail($id);
 

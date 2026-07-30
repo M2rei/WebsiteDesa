@@ -22,6 +22,22 @@
         <form action="{{ route('admin.peternak.store') }}" method="POST">
             @csrf
 
+            @if ($errors->any())
+                <div class="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div class="flex">
+                        <i class="fas fa-exclamation-circle text-red-400 mt-0.5 mr-3"></i>
+                        <div>
+                            <h3 class="text-sm font-medium text-red-800">Ada data yang perlu diperbaiki:</h3>
+                            <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             <div class="mb-4">
                 <label class="block font-medium text-gray-700 mb-1">Nama Peternak</label>
                 <input type="text" name="nama" class="w-full px-4 py-2 border rounded-lg" required>
@@ -92,7 +108,7 @@
 
             <div class="mt-8">
                 <button type="submit"
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition">
+                    class="bg-orange-700 hover:bg-orange-800 text-white px-6 py-3 rounded-lg font-semibold transition">
                     Simpan Data
                 </button>
             </div>

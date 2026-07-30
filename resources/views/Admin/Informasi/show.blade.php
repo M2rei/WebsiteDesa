@@ -16,10 +16,13 @@
 
                 @php
                     $filePath = $berita->lampiran->file_path;
+                    $fileExists = \Illuminate\Support\Facades\Storage::disk('public')->exists($filePath);
                     $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
                 @endphp
 
-                @if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+                @if (!$fileExists)
+                    <img src="{{ asset('images/placeholder.png') }}" alt="Lampiran tidak ditemukan" class="w-full max-w-md rounded border">
+                @elseif (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']))
                     <img src="{{ asset('storage/' . $filePath) }}" alt="Lampiran" class="w-full max-w-md rounded border">
                 @elseif ($ext === 'pdf')
                     <embed src="{{ asset('storage/' . $filePath) }}" type="application/pdf"

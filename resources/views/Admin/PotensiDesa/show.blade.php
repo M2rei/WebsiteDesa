@@ -7,11 +7,9 @@
         <h2 class="text-2xl font-bold mb-4 text-center">{{ $potensidesa->nama_potensi }}</h2>
         <p class="text-gray-600 text-sm mb-6">Kategori: {{ $potensidesa->kategori }}</p>
 
-        @if ($potensidesa->image)
-            <div class="mb-6 text-center">
-                <img src="{{ asset('storage/' . $potensidesa->image) }}" alt="Gambar Potensi" class="w-full max-w-md mx-auto rounded shadow">
-            </div>
-        @endif
+        <div class="mb-6 text-center">
+            <img src="{{ \App\Helpers\ImageHelper::url($potensidesa->image) }}" alt="Gambar Potensi" class="w-full max-w-md mx-auto rounded shadow">
+        </div>
 
         <div class="text-gray-800 leading-relaxed whitespace-pre-line">
             {!! nl2br(e($potensidesa->deskripsi)) !!}

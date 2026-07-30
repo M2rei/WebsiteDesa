@@ -33,9 +33,10 @@
                 <select id="kategori" name="kategori"
                     class="w-full px-4 py-3 border rounded-lg @error('kategori') border-red-500 @enderror" required>
                     <option value="">Pilih Kategori</option>
-                    <option value="Pertanian" {{ old('kategori') == 'Pertanian' ? 'selected' : '' }}>Pertanian</option>
-                    <option value="Peternakan" {{ old('kategori') == 'Peternakan' ? 'selected' : '' }}>Perternakan</option>
-                    </option>
+                    @foreach ($kategoriOptions as $kategori)
+                        <option value="{{ $kategori }}" {{ old('kategori') == $kategori ? 'selected' : '' }}>
+                            {{ $kategori }}</option>
+                    @endforeach
                 </select>
                 @error('kategori')
                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -51,7 +52,7 @@
                     </div>
                     <p class="text-gray-700 font-medium mb-2">Unggah Gambar Berita</p>
                     <p class="text-gray-500 text-sm">Klik untuk memilih file atau drag & drop</p>
-                    <p class="text-gray-400 text-xs mt-2">Format: JPEG, PNG, JPG, GIF (Maks. 2MB)</p>
+                    <p class="text-gray-500 text-xs mt-2">Format: JPEG, PNG, JPG, GIF (Maks. 2MB)</p>
                     <input type="file" id="image-input" name="image" accept="image/*" class="hidden"
                         onchange="previewImage(this)">
                 </div>
@@ -68,7 +69,7 @@
 
             <div class="flex space-x-4 pt-6">
                 <button type="submit"
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center">
+                    class="bg-orange-700 hover:bg-orange-800 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center">
                     <i class="fas fa-save mr-2"></i>
                     Simpan Berita
                 </button>

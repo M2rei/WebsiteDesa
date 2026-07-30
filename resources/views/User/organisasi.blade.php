@@ -1,32 +1,21 @@
 @extends('layout.Navbar')
 
 @section('title', 'Struktur Organisasi - Desa Ngrejo Kabupaten Blitar Jawa Timur')
+@section('meta_description', 'Susunan struktur organisasi dan jajaran perangkat Pemerintah Desa Ngrejo, Kabupaten Blitar, Jawa Timur.')
 
 @section('content')
-    <section class="relative bg-primary-800 text-white py-20 overflow-hidden">
-        <div class="absolute inset-0 z-0 bg-cover bg-center opacity-50"
-            style="background-image: url('{{ asset('image/background/1.JPG') }}')">
-        </div>
-        <div class="relative z-10 container mx-auto px-4">
-            <div class="max-w-4xl mx-auto text-center mt-6">
-                <h1 class="text-5xl font-bold mb-6">Struktur Organisasi Desa Ngrejo</h1>
-                <p class="text-xl text-blue-200">Susunan kepengurusan dan jabatan pemerintahan Desa Ngrejo</p>
-            </div>
-        </div>
-    </section>
+    <x-hero-banner title="Struktur Organisasi Desa Ngrejo"
+        subtitle="Susunan kepengurusan dan jabatan pemerintahan Desa Ngrejo" image="image/background/2.JPG" />
 
     <!-- Bagan Struktur Organisasi -->
     <section class="bg-white py-12">
         <div class="container mx-auto px-4 text-center">
             <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Bagan Struktur Organisasi</h2>
-            @if ($strukturOrganisasi && $strukturOrganisasi->image)
-                <div class="flex justify-center">
-                    <img src="{{ asset('storage/' . $strukturOrganisasi->image) }}" alt="Bagan Struktur Organisasi"
-                        class="w-full max-w-5xl rounded-lg shadow-md border">
-                </div>
-            @else
-                <p class="text-gray-500">Belum ada bagan struktur organisasi yang diunggah.</p>
-            @endif
+            <div class="flex justify-center">
+                <img src="{{ \App\Helpers\ImageHelper::url($strukturOrganisasi?->image) }}"
+                    alt="Bagan Struktur Organisasi" width="1000" height="700"
+                    class="w-full max-w-5xl rounded-lg shadow-md border">
+            </div>
         </div>
     </section>
 
@@ -44,7 +33,8 @@
                         @forelse ($anggotaStruktur as $anggota)
                             <div
                                 class="bg-white shadow hover:shadow-lg transition rounded-lg p-4 text-center border border-gray-200">
-                                <img src="{{ asset('storage/' . $anggota->foto) }}" alt="{{ $anggota->nama }}"
+                                <img src="{{ \App\Helpers\ImageHelper::url($anggota->foto) }}" alt="{{ $anggota->nama }}"
+                                    width="96" height="96"
                                     class="w-24 h-24 object-cover rounded-full mx-auto mb-3 border-2 border-gray-300">
                                 <h3 class="text-md font-semibold text-gray-800">{{ $anggota->nama }}</h3>
                                 <p class="text-sm text-gray-500">{{ $anggota->jabatan }}</p>
@@ -72,7 +62,7 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
+                    entry.target.style.transform = '';
                 }
             });
         }, observerOptions);
@@ -85,14 +75,6 @@
                 section.style.transition =
                     `opacity 0.8s ease ${index * 0.1}s, transform 0.8s ease ${index * 0.1}s`;
                 observer.observe(section);
-            });
-
-            window.addEventListener('scroll', () => {
-                const scrolled = window.pageYOffset;
-                const hero = document.querySelector('section');
-                if (hero) {
-                    hero.style.transform = `translateY(${scrolled * 0.5}px)`;
-                }
             });
 
             const counters = document.querySelectorAll('h3');

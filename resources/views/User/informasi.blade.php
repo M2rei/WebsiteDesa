@@ -1,19 +1,11 @@
 @extends('layout.Navbar')
 
 @section('title', 'Informasi - Desa Ngrejo Kabupaten Blitar Jawa Timur')
+@section('meta_description', 'Kumpulan berita dan informasi terkini seputar kegiatan, program, dan layanan Pemerintah Desa Ngrejo, Kabupaten Blitar, Jawa Timur.')
 
 @section('content')
-    <section class="relative bg-primary-800 text-white py-20 overflow-hidden">
-        <div class="absolute inset-0 z-0 bg-cover bg-center opacity-50"
-            style="background-image: url('{{ asset('image/background/1.JPG') }}')">
-        </div>
-        <div class="relative z-10 container mx-auto px-4">
-            <div class="max-w-4xl mx-auto text-center mt-6">
-                <h1 class="text-5xl font-bold mb-6">Informasi Desa</h1>
-                <p class="text-xl text-blue-200">Informasi terkini seputar kegiatan dan layanan Desa Ngrejo</p>
-            </div>
-        </div>
-    </section>
+    <x-hero-banner title="Informasi Desa"
+        subtitle="Informasi terkini seputar kegiatan dan layanan Desa Ngrejo" image="image/background/2.JPG" />
 
     <!-- Informasi Terbaru -->
     <section class="py-20 bg-gray-50">
@@ -30,16 +22,17 @@
                                 $lampiran = $item->lampiran;
                                 $filePath = $lampiran?->file_path;
                                 $originalName = $lampiran?->original_name;
+                                $fileExists = $filePath && \Illuminate\Support\Facades\Storage::disk('public')->exists($filePath);
                                 $ext = $filePath ? strtolower(pathinfo($filePath, PATHINFO_EXTENSION)) : null;
                                 $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
                                 $isPdf = $ext === 'pdf';
                             @endphp
 
                             <div class="relative z-0">
-                                @if ($filePath)
+                                @if ($fileExists)
                                     @if ($isImage)
                                         <img src="{{ asset('storage/' . $filePath) }}" alt="{{ $originalName }}"
-                                            class="w-full h-48 object-cover">
+                                            width="400" height="192" class="w-full h-48 object-cover">
                                     @elseif ($isPdf)
                                         <div class="w-full h-48 bg-red-100 flex items-center justify-center rounded">
                                             <i class="fas fa-file-pdf text-red-600 text-5xl"></i>
@@ -50,9 +43,8 @@
                                         </div>
                                     @endif
                                 @else
-                                    <div class="w-full h-48 bg-gray-200 flex items-center justify-center rounded">
-                                        <i class="fas fa-file text-gray-400 text-4xl"></i>
-                                    </div>
+                                    <img src="{{ asset('images/placeholder.png') }}" alt="Tidak ada gambar"
+                                        width="400" height="192" class="w-full h-48 object-cover">
                                 @endif
 
                                 <div class="absolute top-4 left-4">
@@ -152,16 +144,17 @@
                                         $lampiran = $item->lampiran;
                                         $filePath = $lampiran?->file_path;
                                         $originalName = $lampiran?->original_name;
+                                        $fileExists = $filePath && \Illuminate\Support\Facades\Storage::disk('public')->exists($filePath);
                                         $ext = $filePath ? strtolower(pathinfo($filePath, PATHINFO_EXTENSION)) : null;
                                         $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
                                         $isPdf = $ext === 'pdf';
                                     @endphp
 
-                                    @if ($filePath)
+                                    @if ($fileExists)
                                         @if ($isImage)
                                             <a href="{{ asset('storage/' . $filePath) }}" target="_blank">
                                                 <img src="{{ asset('storage/' . $filePath) }}" alt="{{ $originalName }}"
-                                                    class="w-full h-48 object-cover">
+                                                    width="400" height="192" class="w-full h-48 object-cover">
                                             </a>
                                         @elseif ($isPdf)
                                             <a href="{{ asset('storage/' . $filePath) }}" target="_blank">
@@ -179,9 +172,8 @@
                                             </a>
                                         @endif
                                     @else
-                                        <div class="w-full h-48 bg-gray-200 flex items-center justify-center rounded">
-                                            <i class="fas fa-file text-gray-400 text-4xl"></i>
-                                        </div>
+                                        <img src="{{ asset('images/placeholder.png') }}" alt="Tidak ada gambar"
+                                            width="400" height="192" class="w-full h-48 object-cover">
                                     @endif
 
                                     <div class="absolute top-4 left-4">
@@ -274,7 +266,7 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
+                    entry.target.style.transform = '';
                 }
             });
         }, observerOptions);
@@ -287,14 +279,6 @@
                 section.style.transition =
                     `opacity 0.8s ease ${index * 0.1}s, transform 0.8s ease ${index * 0.1}s`;
                 observer.observe(section);
-            });
-
-            window.addEventListener('scroll', () => {
-                const scrolled = window.pageYOffset;
-                const hero = document.querySelector('section');
-                if (hero) {
-                    hero.style.transform = `translateY(${scrolled * 0.5}px)`;
-                }
             });
 
             const counters = document.querySelectorAll('h3');

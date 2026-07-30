@@ -11,4 +11,12 @@ class PotensiDesa extends Model
 
     protected $fillable = ['kategori', 'nama_potensi', 'deskripsi', 'image'];
 
+    public const KATEGORI_OPTIONS = [
+        'Pertanian',
+        'Peternakan',
+        'Pariwisata',
+        'Perdagangan',
+        'Perikanan',
+        'UMKM',
+    ];
 }

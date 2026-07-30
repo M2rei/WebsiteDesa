@@ -18,7 +18,6 @@
                 <div>
                     <p><strong>Jenis Surat:</strong> {{ $suratdesa->jenis_surat }}</p>
                     <p><strong>Nama:</strong> {{ $suratdesa->nama }}</p>
-                    <p><strong>NIK:</strong> {{ $suratdesa->nik }}</p>
                     <p><strong>Tempat & Tgl Lahir:</strong> {{ $suratdesa->tempat_tgl_lahir }}</p>
                     <p><strong>Jenis Kelamin:</strong> {{ $suratdesa->jenis_kelamin }}</p>
                 </div>
@@ -38,22 +37,30 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     @foreach ($suratdesa->dataPendukung as $lampiran)
                         <img src="{{ route('admin.surat-desa.gambar.show', basename($lampiran->image)) }}"
-                            alt="Lampiran Surat" class="w-full max-w-md rounded shadow">
+                            alt="Lampiran Surat" onclick="openLightbox(this.src)"
+                            class="w-full max-w-md rounded shadow cursor-zoom-in hover:opacity-90 transition-opacity">
                     @endforeach
                 </div>
             </div>
         @endif
 
+        <!-- Lightbox Lampiran -->
+        <div id="lightbox" onclick="closeLightbox()"
+            class="fixed inset-0 bg-black/80 hidden z-50 items-center justify-center p-4">
+            <button type="button" onclick="closeLightbox()" aria-label="Tutup"
+                class="absolute top-4 right-4 text-white w-11 h-11 flex items-center justify-center hover:text-gray-300">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <img id="lightbox-image" src="" alt="Lampiran Surat (diperbesar)"
+                class="max-w-full max-h-full rounded shadow-lg" onclick="event.stopPropagation()">
+        </div>
+
         <div class="flex flex-wrap gap-3 mt-4">
             @if ($suratdesa->status === 'diproses')
-                <form action="{{ route('admin.surat-desa.update-status', $suratdesa->id) }}" method="POST"
-                    onsubmit="return confirm('Apakah Anda yakin ingin mengubah status menjadi selesai?')">
-                    @csrf
-                    @method('PATCH')
-                    <button type="submit" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md">
-                        Tandai Selesai
-                    </button>
-                </form>
+                <button type="button" onclick="openStatusModal()"
+                    class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md">
+                    Tandai Selesai
+                </button>
             @else
                 <span class="inline-block px-4 py-2 bg-gray-200 text-gray-700 rounded-md">
                     Status: Selesai
@@ -66,4 +73,39 @@
             </a>
         </div>
     </div>
+
+    <x-confirm-modal id="statusModal" formId="statusForm" title="Konfirmasi Perubahan Status"
+        description="Apakah Anda yakin ingin mengubah status surat ini menjadi selesai?"
+        confirmLabel="Ya, Tandai Selesai" color="green" method="PATCH"
+        action="{{ route('admin.surat-desa.update-status', $suratdesa->id) }}" />
 @endsection
+
+@push('scripts')
+    <script>
+        function openStatusModal() {
+            const modal = document.getElementById('statusModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function openLightbox(src) {
+            document.getElementById('lightbox-image').src = src;
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.remove('hidden');
+            lightbox.classList.add('flex');
+        }
+
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.add('hidden');
+            lightbox.classList.remove('flex');
+            document.getElementById('lightbox-image').src = '';
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+    </script>
+@endpush

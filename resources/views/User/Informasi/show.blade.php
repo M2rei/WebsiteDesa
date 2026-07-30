@@ -3,6 +3,8 @@
 @section('title', $informasi->judul)
 
 @section('content')
+    <x-hero-banner :title="$informasi->judul" subtitle="Informasi Desa Ngrejo" image="image/background/2.JPG" />
+
     <section class="py-20 bg-white">
         <div class="container mx-auto px-4 max-w-4xl">
             <h1 class="text-4xl font-bold text-gray-800 mb-4">{{ $informasi->judul }}</h1>
@@ -15,15 +17,17 @@
                 $lampiran = $informasi->lampiran;
                 $filePath = $lampiran?->file_path;
                 $originalName = $lampiran?->original_name;
+                $fileExists = $filePath && \Illuminate\Support\Facades\Storage::disk('public')->exists($filePath);
                 $ext = $filePath ? strtolower(pathinfo($filePath, PATHINFO_EXTENSION)) : null;
                 $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
                 $isPdf = $ext === 'pdf';
             @endphp
 
-            @if ($filePath)
-                <div class="mb-6">
+            <div class="mb-6">
+                @if ($fileExists)
                     @if ($isImage)
-                        <img src="{{ asset('storage/' . $filePath) }}" alt="{{ $originalName }}" class="w-full rounded-lg">
+                        <img src="{{ asset('storage/' . $filePath) }}" alt="{{ $originalName }}" width="800"
+                            height="450" class="w-full rounded-lg">
                     @elseif ($isPdf)
                         <iframe src="{{ asset('storage/' . $filePath) }}#toolbar=1" class="w-full h-[600px] rounded-lg"
                             frameborder="0"></iframe>
@@ -31,8 +35,11 @@
                         <a href="{{ asset('storage/' . $filePath) }}" target="_blank"
                             class="inline-block text-primary-600 underline">Unduh Lampiran ({{ strtoupper($ext) }})</a>
                     @endif
-                </div>
-            @endif
+                @else
+                    <img src="{{ asset('images/placeholder.png') }}" alt="Tidak ada lampiran" width="800" height="450"
+                        class="w-full rounded-lg">
+                @endif
+            </div>
 
             <div class="prose max-w-none">
                 {!! nl2br(e($informasi->deskripsi)) !!}

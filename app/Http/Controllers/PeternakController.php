@@ -70,10 +70,12 @@ class PeternakController extends Controller
         $request->validate([
             'nama' => 'required|string',
             'alamat' => 'required|string',
-            'periode' => 'required|string',
+            'periode' => 'required|in:Januari - Juni,Juli - Desember',
             'tahun' => 'required|string',
             'ternaks' => 'required|array',
             'ternaks.*.jenis_ternak' => 'required|string',
+            'ternaks.*.jantan' => 'nullable|integer|min:0',
+            'ternaks.*.betina' => 'nullable|integer|min:0',
             'ternaks.*.jumlah' => 'nullable|integer|min:0',
             'ternaks.*.riwayat_penyakit' => 'nullable|string|min:0',
             'ternaks.*.vitamin' => 'nullable|string|min:0',

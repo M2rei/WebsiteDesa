@@ -15,13 +15,36 @@ class InformasiController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 5);
+        $search = $request->input('search');
+        $sort = $request->input('sort', 'created_at');
+        $direction = $request->input('direction') === 'asc' ? 'asc' : 'desc';
+
+        if (! in_array($sort, ['kategori', 'judul', 'penulis', 'created_at'], true)) {
+            $sort = 'created_at';
+        }
+
+        $query = Informasi::with('lampiran');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('judul', 'like', "%{$search}%")
+                    ->orWhere('penulis', 'like', "%{$search}%")
+                    ->orWhere('kategori', 'like', "%{$search}%");
+            });
+        }
+
+        $query->orderBy($sort, $direction);
+
         $beritas = $perPage === 'all'
-            ? Informasi::with('lampiran')->latest()->get()
-            : Informasi::with('lampiran')->latest()->paginate($perPage);
+            ? $query->get()
+            : $query->paginate($perPage)->withQueryString();
 
         return view('Admin.Informasi.informasi', [
             'beritas' => $beritas,
-            'selectedPerPage' => $perPage
+            'selectedPerPage' => $perPage,
+            'search' => $search,
+            'sort' => $sort,
+            'direction' => $direction,
         ]);
     }
 
@@ -120,7 +143,7 @@ class InformasiController extends Controller
     public function destroy($id)
     {
         $berita = Informasi::findOrFail($id);
-        if (Storage::disk('public')->exists($berita->lampiran->file_path)) {
+        if ($berita->lampiran && Storage::disk('public')->exists($berita->lampiran->file_path)) {
             Storage::disk('public')->delete($berita->lampiran->file_path);
         }
         $berita->delete();

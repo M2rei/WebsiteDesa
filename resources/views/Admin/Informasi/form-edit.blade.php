@@ -48,7 +48,7 @@
                         <i class="fas fa-cloud-upload-alt text-5xl"></i>
                     </div>
                     <p class="text-gray-700 font-medium mb-2">Klik untuk memilih file atau drag & drop</p>
-                    <p class="text-gray-400 text-xs mt-2">Format: JPEG, PNG, JPG, PDF (Maks. 2MB)</p>
+                    <p class="text-gray-500 text-xs mt-2">Format: JPEG, PNG, JPG, PDF (Maks. 2MB)</p>
                     <input type="file" id="lampiran-input" name="lampiran" accept="image/*,application/pdf"
                         class="hidden" onchange="previewLampiran(this)">
                 </div>
@@ -61,10 +61,14 @@
                         <label class="block text-lg font-semibold text-gray-700 mb-2">Lampiran Sebelumnya</label>
                         @php
                             $filePath = $berita->lampiran->file_path;
+                            $fileExists = \Illuminate\Support\Facades\Storage::disk('public')->exists($filePath);
                             $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
                         @endphp
 
-                        @if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+                        @if (!$fileExists)
+                            <img src="{{ asset('images/placeholder.png') }}" alt="Lampiran tidak ditemukan"
+                                class="w-full max-w-sm rounded border">
+                        @elseif (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']))
                             <img src="{{ asset('storage/' . $filePath) }}" alt="Lampiran"
                                 class="w-full max-w-sm rounded border">
                         @elseif ($ext === 'pdf')
@@ -92,7 +96,7 @@
                 </div>
             </div>
             <div class="pt-6">
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full">
+                <button type="submit" class="bg-orange-700 hover:bg-orange-800 text-white px-6 py-3 rounded-full">
                     Simpan Perubahan
                 </button>
                 <a href="{{ route('admin.informasi.index') }}"

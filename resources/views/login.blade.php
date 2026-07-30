@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Admin - Sistem Informasi Desa</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" href="{{ asset('storage/' . $desa->logo_url) }}" type="image/png">
+    @vite('resources/css/app.css')
+    <link rel="icon" href="{{ \App\Helpers\ImageHelper::url($desa->logo_url) }}" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
@@ -20,7 +20,7 @@
             <div class="absolute top-10 left-10 w-32 h-32 bg-blue-500 rounded-full opacity-30 blur-xl"></div>
             <div class="absolute top-32 right-20 w-24 h-24 bg-blue-400 rounded-full opacity-40 blur-lg"></div>
             <div class="absolute bottom-20 left-20 w-40 h-40 bg-blue-600 rounded-full opacity-20 blur-2xl"></div>
-            <div class="absolute inset-0 bg-black bg-opacity-20 flex items-end p-12 z-10">
+            <div class="absolute inset-0 bg-black/20 flex items-end p-12 z-10">
                 <div class="text-white">
                     <h2 class="text-3xl font-bold mb-4">Sistem Informasi Desa</h2>
                     <p class="text-lg opacity-90">Kelola informasi desa dengan mudah dan efisien</p>
@@ -32,7 +32,7 @@
             <div class="w-full max-w-md">
                 <div class="text-center mb-8">
                     <div
-                        class="mx-auto w-16 h-16 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center mb-4">
+                        class="mx-auto w-16 h-16 bg-gradient-to-r from-primary-500 to-primary-700 rounded-full flex items-center justify-center mb-4">
                         <i class="fas fa-user-shield text-white text-2xl"></i>
                     </div>
                     <h1 class="text-3xl font-bold text-gray-900 mb-2">Login</h1>
@@ -68,7 +68,7 @@
                             </div>
                             <input type="text" id="email" name="email" value="{{ old('email') }}"
                                 placeholder="Enter Your Username Here" required
-                                class="w-full pl-10 pr-4 py-3 border b-gray-300 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors duration-200 @error('email') border-red-300 @enderror">
+                                class="w-full pl-10 pr-4 py-3 border b-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200 @error('email') border-red-300 @enderror">
                         </div>
                         @error('email')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -85,7 +85,7 @@
                             </div>
                             <input type="password" id="password" name="password" placeholder="Enter Your Password Here"
                                 required
-                                class="w-full pl-10 pr-12 py-3 border b-gray-300 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-colors duration-200 @error('password') border-red-300 @enderror">
+                                class="w-full pl-10 pr-12 py-3 border b-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200 @error('password') border-red-300 @enderror">
                             <button type="button" onclick="togglePassword()"
                                 class="absolute inset-y-0 right-0 pr-3 flex items-center">
                                 <i id="passwordToggle" class="fas fa-eye text-gray-400 hover:text-gray-600"></i>
@@ -97,7 +97,7 @@
                     </div>
 
                     <button type="submit"
-                        class="w-full bg-gradient-to-r from-pink-500 to-pink-600 text-white py-3 px-4 rounded-xl font-medium text-lg hover:from-pink-600 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
+                        class="w-full bg-gradient-to-r from-orange-700 to-orange-800 text-white py-3 px-4 rounded-xl font-medium text-lg hover:from-orange-800 hover:to-orange-900 focus:outline-none focus:ring-2 focus:ring-orange-700 focus:ring-offset-2 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
                         <i class="fas fa-sign-in-alt mr-2"></i>
                         Login
                     </button>
@@ -105,7 +105,7 @@
                         <a href="{{ route('auth.google.redirect') }}"
                             class="w-full flex items-center justify-center gap-2 bg-white text-gray-700 border border-gray-300 py-3 px-4 rounded-xl font-medium text-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200">
                             <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo"
-                                class="w-5 h-5">
+                                width="20" height="20" class="w-5 h-5">
                             Login Dengan Google
                         </a>
                     </div>
@@ -136,10 +136,6 @@
             }
         }
 
-        document.querySelector('form').addEventListener('submit', function() {
-            document.getElementById('loadingOverlay').classList.remove('hidden');
-        });
-
         setTimeout(function() {
             const errorDiv = document.querySelector('.bg-red-50');
             if (errorDiv) {
@@ -164,23 +160,17 @@
         document.addEventListener('keydown', function(e) {
             if (e.altKey && e.key === 'l') {
                 e.preventDefault();
-                document.getElementById('username').focus();
+                document.getElementById('email').focus();
             }
         });
 
         document.querySelector('form').addEventListener('submit', function(e) {
-            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
-            if (!username || !password) {
+            if (!email || !password) {
                 e.preventDefault();
-                alert('Mohon lengkapi username dan password');
-                return false;
-            }
-
-            if (username.length < 3) {
-                e.preventDefault();
-                alert('Username minimal 3 karakter');
+                alert('Mohon lengkapi email dan password');
                 return false;
             }
 

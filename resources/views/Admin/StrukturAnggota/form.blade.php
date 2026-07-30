@@ -35,7 +35,7 @@
                     </div>
                     <p class="text-gray-700 font-medium mb-2">Unggah Foto</p>
                     <p class="text-gray-500 text-sm">Klik untuk memilih file atau drag & drop</p>
-                    <p class="text-gray-400 text-xs mt-2">Format: JPEG, PNG, JPG, GIF (Maks. 2MB)</p>
+                    <p class="text-gray-500 text-xs mt-2">Format: JPEG, PNG, JPG, GIF (Maks. 2MB)</p>
                     <input type="file" id="image-input" name="foto" accept="foto/*" class="hidden"
                         onchange="previewImage(this)">
                 </div>
@@ -52,7 +52,7 @@
 
             <div class="flex space-x-4 pt-6">
                 <button type="submit"
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center">
+                    class="bg-orange-700 hover:bg-orange-800 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center">
                     <i class="fas fa-save mr-2"></i>
                     Simpan Berita
                 </button>

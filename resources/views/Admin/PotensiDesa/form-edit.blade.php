@@ -20,15 +20,11 @@
                 <label for="kategori" class="block text-lg font-semibold text-gray-700 mb-2">Kategori</label>
                 <select name="kategori" id="kategori" class="w-full px-4 py-3 border rounded-lg">
                     <option value="">Pilih Kategori</option>
-                    <option value="Pertanian"
-                        {{ old('kategori', $potensidesa->kategori) == 'Pertanian' ? 'selected' : '' }}>Pertanian</option>
-                    <option value="Peternakan"
-                        {{ old('kategori', $potensidesa->kategori) == 'Peternakan' ? 'selected' : '' }}>Peternakan</option>
-                    <option value="Pariwisata"
-                        {{ old('kategori', $potensidesa->kategori) == 'Pariwisata' ? 'selected' : '' }}>Pariwisata</option>
-                    <option value="Perdagangan"
-                        {{ old('kategori', $potensidesa->kategori) == 'Perdagangan' ? 'selected' : '' }}>Perdagangan
-                    </option>
+                    @foreach ($kategoriOptions as $kategori)
+                        <option value="{{ $kategori }}"
+                            {{ old('kategori', $potensidesa->kategori) == $kategori ? 'selected' : '' }}>
+                            {{ $kategori }}</option>
+                    @endforeach
                 </select>
             </div>
 
@@ -41,15 +37,13 @@
 
             <div>
                 <label for="image" class="block text-lg font-semibold text-gray-700 mb-2">Gambar (Opsional)</label>
-                @if ($potensidesa->image)
-                    <img src="{{ asset('storage/' . $potensidesa->image) }}" class="w-full max-w-sm mb-4 rounded">
-                @endif
+                <img src="{{ \App\Helpers\ImageHelper::url($potensidesa->image) }}" class="w-full max-w-sm mb-4 rounded">
                 <input type="file" name="image" class="w-full">
                 <p class="text-sm text-gray-500 mt-2">Kosongkan jika tidak ingin mengganti gambar.</p>
             </div>
 
             <div class="pt-6">
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full">
+                <button type="submit" class="bg-orange-700 hover:bg-orange-800 text-white px-6 py-3 rounded-full">
                     Simpan Perubahan
                 </button>
                 <a href="{{ route('admin.potensi-desa.index') }}"

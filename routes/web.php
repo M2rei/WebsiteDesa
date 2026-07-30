@@ -10,25 +10,20 @@ use App\Http\Controllers\StrukturOrganisasiController;
 use App\Http\Controllers\SuratDesaController;
 use Illuminate\Support\Facades\Route;
 
-//SECTION - USER 
+//SECTION - USER
 Route::get('/', [PublicViewController::class, 'index'])->name('dashboard');
-Route::prefix('user')->group(function () {
-    Route::get('/profile', [PublicViewController::class, 'indexProfileDesa'])->name('user.profile');
-    Route::get('/potensidesa', [PublicViewController::class, 'indexPotensiDesa'])->name('user.potensidesa');
-    Route::get('/potensi-desa/{id}', [PublicViewController::class, 'show_potensidesa'])->name('user.potensidesa.show');
-    Route::get('/informasi', [PublicViewController::class, 'indexInformasi'])->name('user.informasi');
-    Route::get('/informasi/{id}', [PublicViewController::class, 'show_informasi'])->name('user.informasi.show');
-    Route::get('/organisasi', [PublicViewController::class, 'indexStrukturOrganisasi'])->name('user.organisasi');
-});
+Route::get('/profil-desa', [PublicViewController::class, 'indexProfileDesa'])->name('user.profile');
+Route::get('/potensi-desa', [PublicViewController::class, 'indexPotensiDesa'])->name('user.potensidesa');
+Route::get('/potensi-desa/{id}', [PublicViewController::class, 'show_potensidesa'])->name('user.potensidesa.show');
+Route::get('/informasi', [PublicViewController::class, 'indexInformasi'])->name('user.informasi');
+Route::get('/informasi/{id}', [PublicViewController::class, 'show_informasi'])->name('user.informasi.show');
+Route::get('/struktur-organisasi', [PublicViewController::class, 'indexStrukturOrganisasi'])->name('user.organisasi');
 
-Route::prefix('user')->group(function () {
-    Route::get('/surat', [SuratDesaController::class, 'create'])->name('user.surat.create');
-    Route::post('/surat', [SuratDesaController::class, 'store'])->name('user.surat.store');
-    Route::get('/dokumen/{id}', [SuratDesaController::class, 'getFields'])->name('user.dokumen.fields');
-});
+Route::get('/surat-desa', [SuratDesaController::class, 'create'])->name('user.surat.create');
+Route::post('/surat-desa', [SuratDesaController::class, 'store'])->name('user.surat.store')->middleware('throttle:5,1');
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login')->middleware('guest');
-Route::post('/login', [LoginController::class, 'login']);
+Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:5,1');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 //SECTION - ADMIN\

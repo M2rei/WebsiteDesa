@@ -1,20 +1,12 @@
 @extends('layout.Navbar')
 
 @section('title', 'Potensi Desa - Desa Ngrejo Kabupaten Blitar Jawa Timur')
+@section('meta_description', 'Kenali potensi pertanian, peternakan, pariwisata, dan UMKM unggulan Desa Ngrejo, Kabupaten Blitar, Jawa Timur.')
 
 @section('content')
     <!-- Hero -->
-    <section class="relative bg-primary-800 text-white py-20 overflow-hidden">
-        <div class="absolute inset-0 z-0 bg-cover bg-center opacity-50"
-            style="background-image: url('{{ asset('image/background/1.JPG') }}')">
-        </div>
-        <div class="relative z-10 container mx-auto px-4">
-            <div class="max-w-4xl mx-auto text-center mt-6">
-                <h1 class="text-5xl font-bold mb-4">Potensi Desa Ngrejo</h1>
-                <p class="text-xl text-blue-200">Mengenal kekayaan dan potensi untuk kemajuan bersama</p>
-            </div>
-        </div>
-    </section>
+    <x-hero-banner title="Potensi Desa Ngrejo"
+        subtitle="Mengenal kekayaan dan potensi untuk kemajuan bersama" image="image/background/2.JPG" />
 
     <!-- Filter -->
     <section class="py-10 bg-white border-b">
@@ -86,10 +78,10 @@
                             <a href="{{ route('user.potensidesa.show', $item->id) }}">
                                 <div class="bg-white rounded-xl shadow hover:shadow-lg transition">
                                     <div class="relative">
-                                        <img src="{{ $item->image ? asset('storage/' . $item->image) : 'https://via.placeholder.com/400x250?text=Potensi' }}"
-                                            class="w-full h-48 object-cover" alt="{{ $item->nama_potensi }}">
+                                        <img src="{{ \App\Helpers\ImageHelper::url($item->image) }}" width="400"
+                                            height="192" class="w-full h-48 object-cover" alt="{{ $item->nama_potensi }}">
                                         <div class="absolute top-4 left-4">
-                                            <span class="bg-orange-500 text-white px-3 py-1 rounded-full text-sm">
+                                            <span class="bg-orange-700 text-white px-3 py-1 rounded-full text-sm">
                                                 {{ $item->kategori }}
                                             </span>
                                         </div>
@@ -179,7 +171,7 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
+                    entry.target.style.transform = '';
                 }
             });
         }, observerOptions);
@@ -193,15 +185,6 @@
                 section.style.transition =
                     `opacity 0.8s ease ${index * 0.1}s, transform 0.8s ease ${index * 0.1}s`;
                 observer.observe(section);
-            });
-
-            // Add parallax effect to hero section
-            window.addEventListener('scroll', () => {
-                const scrolled = window.pageYOffset;
-                const hero = document.querySelector('section');
-                if (hero) {
-                    hero.style.transform = `translateY(${scrolled * 0.5}px)`;
-                }
             });
 
             // Add counter animation for statistics
