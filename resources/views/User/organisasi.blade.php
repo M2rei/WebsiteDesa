@@ -29,13 +29,12 @@
 
             <div class="flex justify-center">
                 <div class="w-full max-w-6xl px-4">
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 justify-items-center">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
                         @forelse ($anggotaStruktur as $anggota)
-                            <div
-                                class="bg-white shadow hover:shadow-lg transition rounded-lg p-4 text-center border border-gray-200">
+                            <div class="bg-white rounded-lg shadow text-center p-4 hover:shadow-md transition">
                                 <img src="{{ \App\Helpers\ImageHelper::url($anggota->foto) }}" alt="{{ $anggota->nama }}"
                                     width="96" height="96"
-                                    class="w-24 h-24 object-cover rounded-full mx-auto mb-3 border-2 border-gray-300">
+                                    class="w-24 h-24 mx-auto rounded-full object-cover mb-3 border">
                                 <h3 class="text-md font-semibold text-gray-800">{{ $anggota->nama }}</h3>
                                 <p class="text-sm text-gray-500">{{ $anggota->jabatan }}</p>
                             </div>

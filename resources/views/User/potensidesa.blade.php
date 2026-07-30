@@ -91,7 +91,7 @@
                                             {{ $item->nama_potensi }}
                                         </h3>
                                         <p class="text-sm text-gray-600 line-clamp-3">
-                                            {{ $item->deskripsi }}
+                                            {{ \Illuminate\Support\Str::limit(strip_tags($item->deskripsi), 100) }}
                                         </p>
                                     </div>
                                 </div>

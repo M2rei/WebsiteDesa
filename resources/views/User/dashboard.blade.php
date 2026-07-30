@@ -81,7 +81,7 @@
                     <div class="w-12 h-1 bg-orange-500 mb-6 animate-grow-width"></div>
                     <h2 class="text-4xl font-bold text-gray-800 mb-6 animate-fade-in-up">Profil Desa Ngrejo</h2>
                     <p class="text-gray-600 text-lg leading-relaxed mb-8 animate-fade-in-up delay-100">
-                        {{ $desa->profile_desa }}
+                        {!! nl2br(e(\Illuminate\Support\Str::limit($desa->profile_desa, 200))) !!}
                     </p>
                     <a href="{{ route('user.profile') }}"
                         class="inline-flex items-center bg-orange-700 hover:bg-orange-800 text-white px-8 py-4 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 animate-fade-in-up delay-200">

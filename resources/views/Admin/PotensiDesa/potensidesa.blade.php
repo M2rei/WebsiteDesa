@@ -115,7 +115,7 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-normal text-sm text-gray-900">
-                                    <p class="line-clamp-2">{{ $potensidesa->deskripsi }}</p>
+                                    <p class="line-clamp-2">{!! nl2br(e($potensidesa->deskripsi)) !!}</p>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                     {{ $potensidesa->created_at->format('d/m/Y') }}

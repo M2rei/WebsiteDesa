@@ -35,7 +35,7 @@
                 </div>
                 <div class="bg-white rounded-3xl p-10 shadow-xl">
                     <div class="text-gray-700 leading-relaxed text-lg text-justify">
-                        <p>{{ $desa->profile_desa }}</p>
+                        <p>{!! nl2br(e($desa->profile_desa)) !!}</p>
                     </div>
                 </div>
             </div>
@@ -55,7 +55,7 @@
                 </div>
                 <div class="bg-blue-50 rounded-3xl p-10 shadow-xl">
                     <div class="text-gray-700 leading-relaxed text-lg text-justify">
-                        <p>{{ $desa->sejarah }}</p>
+                        <p>{!! nl2br(e($desa->sejarah)) !!}</p>
                     </div>
                 </div>
             </div>
@@ -87,7 +87,7 @@
                             </div>
                             <div class="text-gray-700 leading-relaxed text-lg text-center">
                                 <div class="bg-green-50 rounded-2xl p-6 italic font-medium">
-                                    <p>{{ $desa->visi }}</p>
+                                    <p>{!! nl2br(e($desa->visi)) !!}</p>
                                 </div>
                             </div>
                         </div>

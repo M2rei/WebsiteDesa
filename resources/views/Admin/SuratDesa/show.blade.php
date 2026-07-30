@@ -25,7 +25,7 @@
                     <p><strong>Agama:</strong> {{ $suratdesa->agama }}</p>
                     <p><strong>Pekerjaan:</strong> {{ $suratdesa->pekerjaan }}</p>
                     <p><strong>Alamat:</strong> {{ $suratdesa->alamat }}</p>
-                    <p><strong>Catatan Pemohon:</strong> {{ $suratdesa->catatan_pemohon ?? '-' }}</p>
+                    <p><strong>Catatan Pemohon:</strong> {!! $suratdesa->catatan_pemohon ? nl2br(e($suratdesa->catatan_pemohon)) : '-' !!}</p>
                     <p><strong>Tanggal Dibuat:</strong> {{ $suratdesa->created_at->format('d M Y H:i') }}</p>
                 </div>
             </div>
